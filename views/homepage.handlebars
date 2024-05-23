@@ -1,0 +1,7 @@
+<h1>Welcome to Code Hunt</h1>
+
+{{#if logged_in}}
+    <p>Welcome back, {{username}}!</p>
+{{else}}
+    <p>Please <a href="/auth/login">log in</a> to access all features.</p>
+{{/if}}
