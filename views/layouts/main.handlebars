@@ -12,8 +12,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500&display=swap" rel="stylesheet">
     <script type="module" src="/js/theme.js"></script>
     <script type="module" src="/js/topbar.js"></script>
+    <script type="module" src="/js/global.js"></script>
+
 </head>
-<body>
+<body class="{{bodyClass}}">
     {{>topbar}}
 
     <main class="main">
@@ -24,3 +26,4 @@
         {{/if}}
     </main>
 </body>
+</html>
