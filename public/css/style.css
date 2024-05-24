@@ -626,21 +626,39 @@ textarea { resize: vertical; }
 /** 
 *SIGN UP SYLING
 */
-.signup{background-color:var(--light-secondary-container);}
+.signup{background-color:var(--secondary-container);}
 .email-signup{text-underline-position: below;}
 .labelfor{background-color: #2563eb;}
 .form.form.login-form{
   padding-bottom:30px;
-  padding-top:30px;}
+  padding-top:30px;
+  padding-right: 50px;}
+  
 
 /**
 *LOGIN
 */
-.login{background-color:var(--light-secondary-container);}
+.login{background-color:var(--secondary-container);}
 .form.form.login-form{
   padding-bottom:30px;
   padding-top:30px;
+  padding-right: 50px;
 }
 
+/**
+*Nav 
+*/
 
+a.dropdown-item{
+  display: block;
+  position: relative;
+  background-color:#ffd8a1;
+  color:black;
+  text-decoration: underline;
+}
 
+.btn:hover, .dropdown-item{
+  display: block;
+  display:flex;
+ 
+}
