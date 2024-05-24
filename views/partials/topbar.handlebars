@@ -1,10 +1,15 @@
-<header class="top-app-bar" data-header>
-  <button class="icon-btn" aria-label="Open menu" data-nav-toggler data-ripple>
-    <span class="material-symbols-outlined" aria-hidden="true">menu</span>
-    <div class="state-layer"></div>
+
+  <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Menu
+  <span class="caret"></span></button>
+  <ul class="dropdown-menu">
+    <li><a href="#">HTML</a></li>
+    <li><a href="#">CSS</a></li>
+    <li><a href="#">JavaScript</a></li>
+  </ul>
+</div>
   </button>
   <a href="/" class="logo">
-    <p>Code Hunt</p>
+    <h1>Code Hunt📍</h1>
   </a>
   {{#ifEquals bodyClass "workspace-body"}}
   <div class="problem-nav">
@@ -12,7 +17,7 @@
       <span class="material-symbols-outlined" aria-hidden="true">arrow_back</span>
       <div class="state-layer"></div>
     </button>
-    <div class="problems-list">
+  <div class="problems-list">
       <div class="problems-list-item" id="problems-list-toggle">
         <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
           <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"></path>
