@@ -1,7 +1,20 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   const themeToggle = document.querySelector("[data-theme-toggler]");
   const logoutButton = document.getElementById("logout");
-  
+  const timerToggle = document.getElementById("timer-toggle");
+  const timerContainer = document.getElementById("timer-container");
+  const timerDisplay = document.getElementById("timer-display");
+  const timerReset = document.getElementById("timer-reset");
+  const prevProblemButton = document.getElementById("prev-problem");
+  const nextProblemButton = document.getElementById("next-problem");
+  const problemsListToggle = document.getElementById("problems-list-toggle");
+  const problemsSidebar = document.getElementById("problems-sidebar");
+  const closeSidebarButton = document.getElementById("close-sidebar");
+  const problemsListContainer = document.getElementById("problems-list");
+
+  let problems = [];
+  let currentProblemIndex = -1;
+
   // Function to get the current theme
   const getCurrentTheme = () => {
     return localStorage.getItem("theme") || "light";
@@ -25,6 +38,69 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  let timerInterval;
+  let time = 0;
+
+  const startTimer = () => {
+    timerInterval = setInterval(() => {
+      time++;
+      const hours = Math.floor(time / 3600);
+      const minutes = Math.floor((time % 3600) / 60);
+      const seconds = time % 60;
+      if (timerDisplay) {
+        timerDisplay.textContent = `${hours
+          .toString()
+          .padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds
+          .toString()
+          .padStart(2, "0")}`;
+      }
+    }, 1000);
+  };
+
+  const stopTimer = () => {
+    clearInterval(timerInterval);
+    timerInterval = null;
+  };
+
+  const resetTimer = () => {
+    stopTimer();
+    time = 0;
+    if (timerDisplay) {
+      timerDisplay.textContent = "00:00:00";
+    }
+    if (timerContainer) {
+      timerContainer.classList.add("hidden");
+      timerToggle.classList.remove("hidden");
+    }
+  };
+
+  if (timerToggle) {
+    timerToggle.addEventListener("click", () => {
+      if (timerInterval) {
+        stopTimer();
+      } else {
+        startTimer();
+      }
+      if (timerContainer) {
+        timerContainer.classList.remove("hidden");
+        timerToggle.classList.add("hidden");
+      }
+    });
+  }
+
+  if (timerReset) {
+    timerReset.addEventListener("click", resetTimer);
+  }
+
+  if (timerContainer) {
+    timerContainer.addEventListener("click", () => {
+      if (timerInterval) {
+        stopTimer();
+        resetTimer();
+      }
+    });
+  }
+
   // Logout functionality
   if (logoutButton) {
     logoutButton.addEventListener("click", () => {
@@ -44,4 +120,76 @@ document.addEventListener("DOMContentLoaded", () => {
         .catch((error) => console.error("Error logging out:", error));
     });
   }
+
+  // Fetch problems and store them
+  const fetchProblems = async () => {
+    try {
+      const response = await fetch("/problems");
+      if (!response.ok) {
+        throw new Error("Failed to fetch problems");
+      }
+      problems = await response.json();
+      renderProblemsList();
+    } catch (error) {
+      console.error("Error fetching problems:", error);
+    }
+  };
+
+  // Render problems list in the sidebar
+ const renderProblemsList = () => {
+   if (problemsListContainer) {
+     problemsListContainer.innerHTML = problems
+       .map(
+         (problem) =>
+           `<li><a href="/problems/${problem.id}" class="problem-link">${problem.title} - <span class="difficulty ${problem.difficulty}">${problem.difficulty}</span></a></li>`
+       )
+       .join("");
+   }
+ };
+
+  // Function to get current problem index based on URL
+  const getCurrentProblemIndex = () => {
+    const path = window.location.pathname;
+    const currentProblemId = path.split("/problems/")[1];
+    return problems.findIndex((problem) => problem.id === currentProblemId);
+  };
+
+  // Navigate to problem by index
+  const navigateToProblem = (index) => {
+    if (index >= 0 && index < problems.length) {
+      window.location.href = `/problems/${problems[index].id}`;
+    }
+  };
+
+  // Add event listeners for navigation buttons
+  if (prevProblemButton) {
+    prevProblemButton.addEventListener("click", () => {
+      const index = getCurrentProblemIndex();
+      navigateToProblem(index - 1);
+    });
+  }
+
+  if (nextProblemButton) {
+    nextProblemButton.addEventListener("click", () => {
+      const index = getCurrentProblemIndex();
+      navigateToProblem(index + 1);
+    });
+  }
+
+  // Toggle sidebar
+  if (problemsListToggle) {
+    problemsListToggle.addEventListener("click", () => {
+      problemsSidebar.classList.toggle("hidden");
+      problemsSidebar.classList.add("active");
+    });
+  }
+
+  // Close sidebar
+  if (closeSidebarButton) {
+    closeSidebarButton.addEventListener("click", () => {
+      problemsSidebar.classList.add("hidden");
+    });
+  }
+
+  await fetchProblems();
 });
