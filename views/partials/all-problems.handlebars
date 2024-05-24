@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Problems</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    <script src="https://www.youtube.com/iframe_api"></script>
+</head>
+<body>
+    <div class="problems-container">
+        <table class="problems-table">
+            <thead class="table-head">
+                <tr class="table-row">
+                    <th>Status</th>
+                    <th>Title</th>
+                    <th>Difficulty</th>
+                    <th>Category</th>
+                    <th>Solution</th>
+                </tr>
+            </thead>
+            <tbody id="problems-table-body">
+                {{#each problems}}
+                <tr class="problems-table-row">
+                    <td class="status-cell">
+                        {{#if solved}}
+                        <i class="fas fa-check-circle text-success"></i>
+                        {{/if}}
+                    </td>
+                    <td class="title-cell">
+                        <a href="/problems/{{id}}" class="problem-link">{{title}}</a>
+                    </td>
+                    <td class="difficulty-cell {{difficulty}}">
+                        {{difficulty}}
+                    </td>
+                    <td style="color: white;">{{category}}</td>
+                    <td class="solution-cell">
+                        {{#if videoId}}
+                        <i class="fas fa-youtube text-danger youtube-icon" data-video-id="{{videoId}}"></i>
+                        {{else}}
+                        <p class="text-muted">Coming soon</p>
+                        {{/if}}
+                    </td>
+                </tr>
+                {{/each}}
+            </tbody>
+
+            <tfoot>
+                <tr>
+                    <td colspan="5">
+                        <div class="pagination-controls">
+                            <button id="prev-page" class="pagination-button" disabled>
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true" class="w-4 h-4">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"></path>
+                                </svg>
+                                Previous
+                            </button>
+                            <div class="pagination-numbers" id="page-numbers">
+                                <!-- Page numbers will be inserted here dynamically -->
+                            </div>
+                            <button id="next-page" class="pagination-button">
+                                Next
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true" class="w-4 h-4">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+
+    <!-- YouTube Modal -->
+    <div id="youtube-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <div id="youtube-player"></div>
+        </div>
+    </div>
+
+    <script>
+        let player;
+
+        // Function to load the YouTube Player API
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('youtube-player', {
+                height: '360',
+                width: '640',
+                videoId: '',
+                events: {
+                    'onReady': onPlayerReady,
+                    'onStateChange': onPlayerStateChange
+                }
+            });
+        }
+
+        // Function to be called when the player is ready
+        function onPlayerReady(event) {
+            console.log('YouTube Player is ready.');
+        }
+
+        // Function to handle player state changes
+        function onPlayerStateChange(event) {
+            if (event.data == YT.PlayerState.ENDED) {
+               closeModal();
+            }
+        }
+
+        // Function to open the modal and load the video
+        function openModal(videoId) {
+            document.getElementById('youtube-modal').style.display = 'block';
+            player.loadVideoById(videoId);
+        }
+
+        // Function to close the modal and stop the video
+        function closeModal() {
+            document.getElementById('youtube-modal').style.display = 'none';
+            player.stopVideo();
+        }
+
+        // Add event listeners to YouTube icons
+        document.querySelectorAll('.youtube-icon').forEach(icon => {
+            icon.addEventListener('click', function () {
+                const videoId = this.getAttribute('data-video-id');
+                openModal(videoId);
+            });
+        });
+
+        // Add event listener to the close button
+        document.querySelector('.close-btn').addEventListener('click', closeModal);
+
+        // Add event listener to close the modal when clicking outside of it
+        window.addEventListener('click', function (event) {
+            if (event.target == document.getElementById('youtube-modal')) {
+                closeModal();
+            }
+        });
+    </script>
+    <script>
+        const problems = {{{json problems}}};
+        const solvedProblems = {{{json solvedProblems}}};
+    </script>
+    <script src="/js/problemsTable.js"></script>
+</body>
+</html>

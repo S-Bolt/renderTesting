@@ -1,0 +1,36 @@
+<h1>Problems</h1>
+
+<table class="text-sm text-left text-gray-500 dark:text-gray-400 sm:w-7/12 w-full max-w-[1200px] mx-auto">
+  <thead class="text-xs text-gray-700 uppercase dark:text-gray-400 border-b">
+    <tr>
+      <th scope="col" class="px-1 py-3 w-0 font-medium">Status</th>
+      <th scope="col" class="px-6 py-3 w-0 font-medium">Title</th>
+      <th scope="col" class="px-6 py-3 w-0 font-medium">Difficulty</th>
+      <th scope="col" class="px-6 py-3 w-0 font-medium">Category</th>
+      <th scope="col" class="px-6 py-3 w-0 font-medium">Solution</th>
+    </tr>
+  </thead>
+  <tbody class="dark:text-white text-black">
+    {{#each problems}}
+      <tr>
+        <td class="px-2 py-4 font-medium whitespace-nowrap text-dark-green-s">
+          {{#if this.solved}}
+            <span>&#x2713;</span>
+          {{/if}}
+        </td>
+        <td class="px-6 py-4">
+          <a href="/problems/{{this.id}}" class="hover:text-blue-600 cursor-pointer">{{this.title}}</a>
+        </td>
+        <td class="px-6 py-4 {{this.difficultyColor}}">{{this.difficulty}}</td>
+        <td class="px-6 py-4">{{this.category}}</td>
+        <td class="px-6 py-4">
+          {{#if this.videoId}}
+            <a href="https://www.youtube.com/watch?v={{this.videoId}}" target="_blank">YouTube</a>
+          {{else}}
+            <p class="text-gray-400">Coming soon</p>
+          {{/if}}
+        </td>
+      </tr>
+    {{/each}}
+  </tbody>
+</table>

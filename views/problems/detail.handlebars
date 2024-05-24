@@ -1,0 +1,25 @@
+<h1>{{title}}</h1>
+
+<p>{{problemStatement}}</p>
+
+<h2>Examples</h2>
+{{#each examples}}
+  <div class="example">
+    <h3>Example {{@index}}</h3>
+    <p><strong>Input:</strong> {{this.inputText}}</p>
+    <p><strong>Output:</strong> {{this.outputText}}</p>
+    {{#if this.explanation}}
+      <p><strong>Explanation:</strong> {{this.explanation}}</p>
+    {{/if}}
+    {{#if this.img}}
+      <img src="{{this.img}}" alt="Example image">
+    {{/if}}
+  </div>
+{{/each}}
+
+<h2>Constraints</h2>
+<p>{{constraints}}</p>
+
+<h2>Likes and Dislikes</h2>
+<p>Likes: {{likes}}</p>
+<p>Dislikes: {{dislikes}}</p>
