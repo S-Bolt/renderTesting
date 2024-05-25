@@ -1,62 +1,65 @@
 <div class="workspace-container">
-    <div class="problem-description">
-        <header class="header-title">
-            <h1>Description</h1>
-        </header>
-        <h2>{{problem.title}}</h2>
-        <div class="difficulty {{difficultyClass problem.difficulty}}">
-            {{problem.difficulty}}
-        </div>
-        <div class="problem-statement">{{{problem.problem_statement}}}</div>
+  <div class="problem-description">
+    <div class="flex h-11 w-full items-center pt-2 bg-dark-layer-2 text-white overflow-x-hidden">
+      <div class="bg-dark-layer-1 rounded-t-[5px] px-5 py-[10px] text-xs cursor-pointer">Description</div>
+    </div>
+    <h1>{{problem.title}}</h1>
+    <div class="difficulty {{difficultyClass problem.difficulty}}">
+      {{problem.difficulty}}
+    </div>
+    <div class="problem-statement">{{{problem.problem_statement}}}</div>
 
-        <h2>Examples</h2>
-        {{#each problem.examples}}
-        <div class="example">
-            <h3>Example {{@index}}</h3>
-            <p><strong>Input:</strong> {{{this.inputText}}}</p>
-            <p><strong>Output:</strong> {{{this.outputText}}}</p>
-            {{#if this.explanation}}
-            <p><strong>Explanation:</strong> {{{this.explanation}}}</p>
-            {{/if}}
-        </div>
-        {{/each}}
+    <h2>Examples</h2>
+    {{#each problem.examples}}
+      <div class="example">
+        <h3>Example {{@index}}</h3>
+        <p><strong>Input:</strong> {{{this.inputText}}}</p>
+        <p><strong>Output:</strong> {{{this.outputText}}}</p>
+        {{#if this.explanation}}
+          <p><strong>Explanation:</strong> {{{this.explanation}}}</p>
+        {{/if}}
+      </div>
+    {{/each}}
 
-        <h2>Constraints</h2>
-        <ul>{{{problem.constraints}}}</ul>
+    <h2>Constraints</h2>
+    <ul>{{{problem.constraints}}}</ul>
+  </div>
+
+  <div class="right-container">
+    <div class="flex h-11 w-full items-center pt-2 bg-dark-layer-2 text-white overflow-x-hidden">
+      <div class="bg-dark-layer-1 rounded-t-[5px] px-5 py-[10px] text-xs cursor-pointer">Code</div>
+    </div>
+    <div class="code-editor">
+      <h2>Code</h2>
+      <textarea id="codeInput" rows="10" cols="50">{{problem.starter_code}}</textarea>
+      <div class="editor-buttons">
+        <button id="runCode">Run</button>
+        <button id="submitCode">Submit</button>
+      </div>
     </div>
 
-    <div class="right-container">
-       
-        <div class="code-editor">
-            <header class="header-title">
-                <h1>Code</h1>
-            </header>
-        <textarea id="codeInput" rows="10" cols="50">{{problem.starter_code}}</textarea>
-        <div class="editor-buttons">
-            <button id="runCode">Run</button>
-            <button id="submitCode">Submit</button>
-        </div>
-        </div>
-
-        <div class="test-cases">
-        <header class="header-title">
-            <h1>Test Cases</h1>
-        </header>
-        <div id="test-case-buttons">
-            {{#each problem.examples}}
-            <button class="test-case-btn" data-id="{{@index}}">Case {{@index}}</button>
-            {{/each}}
-        </div>
-        {{#each problem.examples}}
-            <div class="test-case" data-id="{{@index}}">
-            <h3>Case {{@index}}</h3>
-            <p><strong>Input:</strong> {{{this.inputText}}}</p>
-            <p><strong>Output:</strong> <span class="output">{{this.outputText}}</span></p>
-            <p><strong>Result:</strong> <span class="result"></span></p>
-            </div>
-        {{/each}}
-        </div>
+    <div class="flex h-11 w-full items-center pt-2 bg-dark-layer-2 text-white overflow-x-hidden">
+      <div class="bg-dark-layer-1 rounded-t-[5px] px-5 py-[10px] text-xs cursor-pointer">Test Cases</div>
     </div>
+    <div class="test-cases">
+      <h2>Test Cases</h2>
+      <div id="test-case-buttons">
+        {{#each problem.examples}}
+          <button class="test-case-btn" data-id="{{@index}}">Case {{@index}}</button>
+        {{/each}}
+      </div>
+      {{#each problem.examples}}
+        <div class="test-case" data-id="{{@index}}">
+          <h3>Case {{@index}}</h3>
+          <p><strong>Input:</strong> {{{this.inputText}}}</p>
+          <p><strong>Output:</strong> <span class="output">{{this.outputText}}</span></p>
+          <p><strong>Result:</strong> <span class="result"></span></p>
+        </div>
+      {{/each}}
+    </div>
+  </div>
 </div>
+
+<input type="hidden" id="problemId" value="{{problem.id}}">
 
 <script type="module" src="/js/workspace.js"></script>

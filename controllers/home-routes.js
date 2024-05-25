@@ -91,12 +91,25 @@ router.get("/problems", async (req, res) => {
       ],
     });
 
-    const problems = problemData.map((problem) => problem.get({ plain: true }));
+    const problems = problemData.map((problem) =>
+      problem.get({
+        plain: true,
+      })
+    );
 
-    res.status(200).json(problems);
+    const userData = await User.findByPk(req.session.user_id, {
+      attributes: { exclude: ["password"] },
+    });
+
+    const solvedProblems = userData ? userData.solvedProblems : [];
+
+    res.render("all-problems", {
+      problems: JSON.stringify(problems),
+      solvedProblems: JSON.stringify(solvedProblems),
+      logged_in: req.session.logged_in,
+    });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Failed to load problems" });
+    res.status(500).json(err);
   }
 });
 
@@ -129,5 +142,6 @@ router.get("/problems/:id", withAuth, async (req, res) => {
     res.status(500).json(err);
   }
 });
+
 
 module.exports = router;

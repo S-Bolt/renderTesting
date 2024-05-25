@@ -123,29 +123,22 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // Fetch problems and store them
   const fetchProblems = async () => {
-    try {
-      const response = await fetch("/problems");
-      if (!response.ok) {
-        throw new Error("Failed to fetch problems");
-      }
-      problems = await response.json();
-      renderProblemsList();
-    } catch (error) {
-      console.error("Error fetching problems:", error);
-    }
+    const response = await fetch("/api/problems");
+    problems = await response.json();
+    renderProblemsList();
   };
 
   // Render problems list in the sidebar
- const renderProblemsList = () => {
-   if (problemsListContainer) {
-     problemsListContainer.innerHTML = problems
-       .map(
-         (problem) =>
-           `<li><a href="/problems/${problem.id}" class="problem-link">${problem.title} - <span class="difficulty ${problem.difficulty}">${problem.difficulty}</span></a></li>`
-       )
-       .join("");
-   }
- };
+  const renderProblemsList = () => {
+    if (problemsListContainer) {
+      problemsListContainer.innerHTML = problems
+        .map(
+          (problem) =>
+            `<li><a href="/problems/${problem.id}" class="problem-link">${problem.title} - <span class="difficulty ${problem.difficulty}">${problem.difficulty}</span></a></li>`
+        )
+        .join("");
+    }
+  };
 
   // Function to get current problem index based on URL
   const getCurrentProblemIndex = () => {
