@@ -27,6 +27,21 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
+  async function fetchSavedCode(problemId) {
+    try {
+      const response = await fetch(`/api/code/submissions/${problemId}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const submission = await response.json();
+      if (submission && submission.code) {
+        codeInput.value = submission.code;
+      }
+    } catch (error) {
+      console.error("Error fetching saved code:", error);
+    }
+  }
+
   setActiveTestCase(activeTestCase);
 
   function setActiveTestCase(index) {
@@ -116,58 +131,32 @@ return (function(${functionName}) {
     const userCode = codeInput.value;
     console.log("Submitting code:", userCode);
 
-    try {
-      let allPassed = true;
-
-      testCases.forEach((testCase, index) => {
-        const input = testCase
-          .querySelector("p strong:nth-of-type(1)")
-          .nextSibling.textContent.trim();
-        const inputs = parseInputs(input);
-        const expectedOutput = JSON.parse(
-          testCase.querySelector(".output").textContent.trim()
-        );
-        const resultSpan = testCase.querySelector(".result");
-
-        console.log(`Running test case ${index} with input: ${input}`);
-        console.log(`Parsed inputs: ${JSON.stringify(inputs)}`);
-
-        const functionName = getFunctionName(problemId);
-
-        const functionBody = `
-return (function(${functionName}) {
-  ${userCode}
-  return ${functionName}(...args);
-})(...args)`;
-
-        console.log(`Generated function body:\n${functionBody}`);
-
-        const userFunction = new Function("args", functionBody);
-
-        const output = userFunction(inputs);
-
-        console.log(`Output for test case ${index}: ${JSON.stringify(output)}`);
-
-        if (JSON.stringify(output) !== JSON.stringify(expectedOutput)) {
-          allPassed = false;
-          resultSpan.textContent = `Failed (Got: ${JSON.stringify(output)})`;
-          resultSpan.style.color = "red";
-        } else {
-          resultSpan.textContent = "Passed";
-          resultSpan.style.color = "green";
+    fetch("/api/code/submit-code", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ code: userCode, problemId }),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
+        return response.json();
+      })
+      .then((data) => {
+        const results = data.results;
+        if (results) {
+          jsConfetti.addConfetti(); // Trigger confetti effect
+          showToast("Congrats! All test cases passed!", "success");
+        } else {
+          showToast("Some test cases failed.", "error");
+        }
+      })
+      .catch((error) => {
+        console.error("Submit error:", error);
+        showToast(`Error: ${error.message}`, "error");
       });
-
-      if (allPassed) {
-        jsConfetti.addConfetti(); // Trigger confetti effect
-        showToast("Congrats! All test cases passed!", "success");
-      } else {
-        showToast("Some test cases failed.", "error");
-      }
-    } catch (error) {
-      console.error("Submit error:", error);
-      showToast(`Error: ${error.message}`, "error");
-    }
   });
 
   function getFunctionName(problemId) {
@@ -198,6 +187,7 @@ return (function(${functionName}) {
       });
       setActiveTestCase(0);
     }
+    await fetchSavedCode(problemId); // Fetch saved code after loading the problem
   }
 
   function parseInputs(input) {

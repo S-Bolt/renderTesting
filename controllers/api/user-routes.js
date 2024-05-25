@@ -1,3 +1,4 @@
+// controllers/api/user-routes.js
 const router = require("express").Router();
 const { User } = require("../../models");
 
@@ -18,6 +19,7 @@ router.post("/", async (req, res) => {
     req.session.save(() => {
       req.session.user_id = userData.id;
       req.session.logged_in = true;
+      console.log("User created and session saved:", req.session.user_id);
 
       res.status(200).json(userData);
     });
@@ -52,6 +54,7 @@ router.post("/login", async (req, res) => {
     req.session.save(() => {
       req.session.user_id = userData.id;
       req.session.logged_in = true;
+      console.log("User logged in and session saved:", req.session.user_id);
 
       res.json({ user: userData, message: "You are now logged in!" });
     });
@@ -69,6 +72,11 @@ router.post("/logout", (req, res) => {
   } else {
     res.status(404).end();
   }
+});
+
+// Add this route to check session status
+router.get("/session-status", (req, res) => {
+  res.json(req.session);
 });
 
 module.exports = router;

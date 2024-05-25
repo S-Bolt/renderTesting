@@ -1,8 +1,10 @@
+// controllers/home-routes.js
 const router = require("express").Router();
-const { User, Problem } = require("../models");
+const { User, Problem, UserProblem } = require("../models");
 const withAuth = require("../utils/auth");
+const { Op } = require("sequelize");
 
-// Route for displaying the homepage
+// Route for displaying the homepage with problems
 router.get("/", async (req, res) => {
   try {
     const problemData = await Problem.findAll({
@@ -37,11 +39,14 @@ router.get("/", async (req, res) => {
       if (userData) {
         user = userData.get({ plain: true });
 
-        const userProblems = await Problem.findAll({
-          where: { user_id: req.session.user_id },
+        const userProblems = await UserProblem.findAll({
+          where: { user_id: req.session.user_id, results: true }, // Fetch only solved problems
         });
 
-        solvedProblemIds = userProblems.map((problem) => problem.id);
+        solvedProblemIds = userProblems.map(
+          (userProblem) => userProblem.problem_id
+        );
+
         problems.forEach((problem) => {
           if (solvedProblemIds.includes(problem.id)) {
             problem.solved = true;
@@ -58,58 +63,6 @@ router.get("/", async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Failed to load homepage" });
-  }
-});
-
-// Route for displaying the login page
-router.get("/login", (req, res) => {
-  if (req.session.logged_in) {
-    res.redirect("/");
-    return;
-  }
-  res.render("login");
-});
-
-// Route for displaying the sign-up page
-router.get("/signUp", (req, res) => {
-  if (req.session.logged_in) {
-    res.redirect("/");
-    return;
-  }
-  res.render("signUp");
-});
-
-// Route for displaying all problems
-router.get("/problems", async (req, res) => {
-  try {
-    const problemData = await Problem.findAll({
-      include: [
-        {
-          model: User,
-          attributes: ["username"],
-        },
-      ],
-    });
-
-    const problems = problemData.map((problem) =>
-      problem.get({
-        plain: true,
-      })
-    );
-
-    const userData = await User.findByPk(req.session.user_id, {
-      attributes: { exclude: ["password"] },
-    });
-
-    const solvedProblems = userData ? userData.solvedProblems : [];
-
-    res.render("all-problems", {
-      problems: JSON.stringify(problems),
-      solvedProblems: JSON.stringify(solvedProblems),
-      logged_in: req.session.logged_in,
-    });
-  } catch (err) {
-    res.status(500).json(err);
   }
 });
 
@@ -141,6 +94,24 @@ router.get("/problems/:id", withAuth, async (req, res) => {
   } catch (err) {
     res.status(500).json(err);
   }
+});
+
+// Route for displaying the login page
+router.get("/login", (req, res) => {
+  if (req.session.logged_in) {
+    res.redirect("/homepage");
+    return;
+  }
+  res.render("login");
+});
+
+// Route for displaying the sign-up page
+router.get("/signUp", (req, res) => {
+  if (req.session.logged_in) {
+    res.redirect("/");
+    return;
+  }
+  res.render("signUp");
 });
 
 

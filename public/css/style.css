@@ -380,7 +380,7 @@ textarea { resize: vertical; }
 }
 
 .hidden {
-  display: none;
+  display: none !important;
 }
 
 /*-----------------------------------*\
@@ -806,12 +806,20 @@ font-size: 0.75rem;
 }
 
 .status-cell {
+   font-size: 1.8rem !important;
   font-weight: 500;
   padding-top: 1rem;
   padding-bottom: 1rem;
   padding-left: 0.5rem;
   padding-right: 0.5rem;
   white-space: nowrap;
+   display: flex; /* Ensure the icon is displayed */
+  align-items: center; /* Align the icon vertically if needed */
+  justify-content: center; /* Center the icon horizontally if needed */
+}
+
+.text-success {
+  color: green !important;
 }
 
 .title-cell,
