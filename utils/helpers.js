@@ -2,12 +2,10 @@ const Handlebars = require("handlebars");
 
 module.exports = {
   format_date: (date) => {
-    // Check if date is valid
     if (!date) return "";
     return new Date(date).toLocaleDateString();
   },
   format_username: (username) => {
-    // Capitalize the first letter of the username
     if (typeof username !== "string") return "";
     return username.charAt(0).toUpperCase() + username.slice(1).toLowerCase();
   },
@@ -29,9 +27,14 @@ module.exports = {
         return "";
     }
   },
+  capitalize: (str) => {
+    return str
+      .split("-")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join("");
+  },
 };
 
-// Register the helpers with Handlebars
 Handlebars.registerHelper("ifEquals", (arg1, arg2, options) => {
   return arg1 == arg2 ? options.fn(this) : options.inverse(this);
 });

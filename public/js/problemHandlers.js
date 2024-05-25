@@ -1,5 +1,34 @@
-// const { createSubmission, getSubmissionResult } = require("./judge0Service");
 const assert = require("assert");
+
+// Helper functions for binary tree problem
+class TreeNode {
+  constructor(val, left = null, right = null) {
+    this.val = val;
+    this.left = left;
+    this.right = right;
+  }
+}
+
+function createBinaryTree(values) {
+  if (values.length === 0) return null;
+  const root = new TreeNode(values[0]);
+  const queue = [root];
+  let i = 1;
+  while (i < values.length) {
+    const node = queue.shift();
+    if (values[i] !== null) {
+      node.left = new TreeNode(values[i]);
+      queue.push(node.left);
+    }
+    i++;
+    if (i < values.length && values[i] !== null) {
+      node.right = new TreeNode(values[i]);
+      queue.push(node.right);
+    }
+    i++;
+  }
+  return root;
+}
 
 // Handler for Two Sum problem
 const handlerTwoSum = async (source_code) => {
@@ -19,41 +48,28 @@ const handlerTwoSum = async (source_code) => {
     for (let i = 0; i < nums.length; i++) {
       const input = `const input = ${JSON.stringify(nums[i])}; const target = ${
         targets[i]
-      }; console.log(twoSum(input, target));`;
-      const source_code_with_input = `${source_code}\n${input}`;
+      }; return twoSum(input, target);`;
+      const functionBody = `
+        ${source_code}
+        ${input}
+      `;
 
       console.log(
-        `Submitting code for test case ${i} with input: ${JSON.stringify(
+        `Running code for test case ${i} with input: ${JSON.stringify(
           nums[i]
         )}, ${targets[i]}`
       );
 
-      const submission = await createSubmission(source_code_with_input, 63, "");
-      const { token } = submission;
+      const userFunction = new Function(functionBody);
+      const output = userFunction();
 
-      let result;
-      while (true) {
-        result = await getSubmissionResult(token);
-        if (result.status.id === 1 || result.status.id === 2) {
-          await new Promise((resolve) => setTimeout(resolve, 2000));
-        } else {
-          break;
-        }
-      }
-
-      if (result.stdout) {
-        const output = result.stdout.trim();
-        console.log(`Received output for test case ${i}: ${output}`);
-        const parsedOutput = JSON.parse(output);
-        assert.deepStrictEqual(
-          parsedOutput.sort((a, b) => a - b),
-          answers[i].sort((a, b) => a - b)
-        );
-      } else {
-        console.error(`Error: Result stdout is null for test case ${i}`);
-        console.error(`Result: ${JSON.stringify(result, null, 2)}`);
-        throw new Error("Result stdout is null");
-      }
+      console.log(
+        `Received output for test case ${i}: ${JSON.stringify(output)}`
+      );
+      assert.deepStrictEqual(
+        output.sort((a, b) => a - b),
+        answers[i].sort((a, b) => a - b)
+      );
     }
     return true;
   } catch (error) {
@@ -180,7 +196,7 @@ const handlerMaxArea = async (source_code) => {
       [1, 2, 4, 3],
       [2, 3, 10, 5, 7, 8, 9],
     ];
-    const answers = [49, 1, 2, 36];
+    const answers = [49, 1, 6, 36];
     for (let i = 0; i < tests.length; i++) {
       const result = await eval(`(${source_code})`)(tests[i]);
       if (result !== answers[i]) {
@@ -245,36 +261,6 @@ const handlerMergeIntervals = async (source_code) => {
     throw new Error(error);
   }
 };
-
-// Helper functions for binary tree problem
-class TreeNode {
-  constructor(val, left = null, right = null) {
-    this.val = val;
-    this.left = left;
-    this.right = right;
-  }
-}
-
-function createBinaryTree(values) {
-  if (values.length === 0) return null;
-  const root = new TreeNode(values[0]);
-  const queue = [root];
-  let i = 1;
-  while (i < values.length) {
-    const node = queue.shift();
-    if (values[i] !== null) {
-      node.left = new TreeNode(values[i]);
-      queue.push(node.left);
-    }
-    i++;
-    if (i < values.length && values[i] !== null) {
-      node.right = new TreeNode(values[i]);
-      queue.push(node.right);
-    }
-    i++;
-  }
-  return root;
-}
 
 // Handler for Maximum Depth of Binary Tree problem
 const handlerMaxDepth = async (source_code) => {

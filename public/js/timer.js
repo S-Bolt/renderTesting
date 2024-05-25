@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const timerToggleBtn = document.getElementById("timer-toggle");
   const timerResetBtn = document.getElementById("timer-reset");
-  const timerElement = document.getElementById("timer");
+  const timerContainer = document.getElementById("timer-container");
 
   if (timerToggleBtn) {
     timerToggleBtn.addEventListener("click", () => {
@@ -38,12 +38,14 @@ document.addEventListener("DOMContentLoaded", () => {
       console.log("Toggling timer. Show timer:", showTimer);
 
       if (showTimer) {
-        timerElement.classList.add("flex");
-        timerElement.classList.remove("hidden");
+        timerContainer.classList.add("flex");
+        timerContainer.classList.remove("hidden");
+        timerToggleBtn.classList.add("hidden");
         startTimer();
       } else {
-        timerElement.classList.add("hidden");
-        timerElement.classList.remove("flex");
+        timerContainer.classList.add("hidden");
+        timerContainer.classList.remove("flex");
+        timerToggleBtn.classList.remove("hidden");
         stopTimer();
       }
     });
