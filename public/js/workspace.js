@@ -12,6 +12,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   const commentToggle = document.getElementById("comment-toggle");
   const commentSection = document.getElementById("comment-section");
   const leftContainer = document.querySelector(".left-container");
+  const likesCount = document.getElementById("likes-count");
+  const dislikesCount = document.getElementById("dislikes-count");
 
   let activeTestCase = 0;
   let mockProblems = [];
@@ -222,44 +224,44 @@ return (function(${functionName}) {
 
   await fetchProblems();
 
-  // Toggle comment section visibility and scroll into view
+  // Toggle comment section visibility and enable scrolling
   commentToggle.addEventListener("click", () => {
-    commentSection.classList.toggle("hidden");
-    if (!commentSection.classList.contains("hidden")) {
-      commentSection.style.height = "100%";
-      leftContainer.style.overflowY = "scroll";
-      commentSection.scrollIntoView({ behavior: "smooth" });
+    commentSection.classList.remove("hidden");
+    commentSection.classList.toggle("visible");
+    if (commentSection.classList.contains("visible")) {
+      leftContainer.style.overflowY = "auto"; // Enable scrolling
     } else {
-      commentSection.style.height = "auto";
-      leftContainer.style.overflowY = "auto";
+      leftContainer.style.overflowY = "hidden"; // Disable scrolling
     }
   });
 
   // Handle comment form submission
-  document.getElementById("comment-form").addEventListener("submit", async (event) => {
-    event.preventDefault();
-    const content = document.getElementById("comment-content").value.trim();
-    if (!content) return;
+  document
+    .getElementById("comment-form")
+    .addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const content = document.getElementById("comment-content").value.trim();
+      if (!content) return;
 
-    try {
-      const response = await fetch("/api/comments", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ problem_id: problemId, content }),
-      });
+      try {
+        const response = await fetch("/api/comments", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ problem_id: problemId, content }),
+        });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        document.getElementById("comment-content").value = "";
+        fetchComments();
+      } catch (error) {
+        console.error("Error submitting comment:", error);
       }
-
-      document.getElementById("comment-content").value = "";
-      fetchComments();
-    } catch (error) {
-      console.error("Error submitting comment:", error);
-    }
-  });
+    });
 
   const fetchComments = async () => {
     try {
@@ -277,19 +279,68 @@ return (function(${functionName}) {
   const displayComments = (comments) => {
     const commentsList = document.getElementById("comments-list");
     commentsList.innerHTML = "";
-    comments.forEach(comment => {
+    comments.forEach((comment) => {
       const commentDiv = document.createElement("div");
       commentDiv.classList.add("comment");
       commentDiv.innerHTML = `
         <p><strong>${comment.user.username}</strong> said:</p>
         <p>${comment.content}</p>
-        <p class="comment-time">${new Date(comment.created_at).toLocaleString()}</p>
+        <p class="comment-time">${new Date(
+          comment.created_at
+        ).toLocaleString()}</p>
       `;
       commentsList.appendChild(commentDiv);
     });
   };
 
   await fetchComments();
+
+  // Fetch initial likes and dislikes count
+  const fetchFeedback = async () => {
+    try {
+      const response = await fetch(`/api/problems/${problemId}/feedback`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const feedback = await response.json();
+      likesCount.textContent = feedback.likes;
+      dislikesCount.textContent = feedback.dislikes;
+    } catch (error) {
+      console.error("Error fetching feedback:", error);
+    }
+  };
+
+  await fetchFeedback();
+
+  // Handle like button click
+  thumbsUpToggle.addEventListener("click", async () => {
+    try {
+      const response = await fetch(`/api/problems/${problemId}/like`, {
+        method: "POST",
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      await fetchFeedback();
+    } catch (error) {
+      console.error("Error liking problem:", error);
+    }
+  });
+
+  // Handle dislike button click
+  thumbsDownToggle.addEventListener("click", async () => {
+    try {
+      const response = await fetch(`/api/problems/${problemId}/dislike`, {
+        method: "POST",
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      await fetchFeedback();
+    } catch (error) {
+      console.error("Error disliking problem:", error);
+    }
+  });
 
   // Toastify logic
   function showToast(message, type = "success") {
