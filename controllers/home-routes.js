@@ -114,5 +114,26 @@ router.get("/signUp", (req, res) => {
   res.render("signUp");
 });
 
+// Render the leaderboard view
+router.get("/leaderboard", async (req, res) => {
+  try {
+    const users = await User.findAll({
+      attributes: ['username', 'points'],
+      order: [['points', 'DESC']],
+      limit: 10, // Adjust the limit as needed
+    });
+
+    const leaderboardData = users.map(user => user.get({ plain: true }));
+
+    res.render("leaderboard", {
+      leaderboard: leaderboardData,
+      logged_in: req.session.logged_in,
+    });
+  } catch (err) {
+    console.error("Error rendering leaderboard:", err);
+    res.status(500).json(err);
+  }
+});
+
 
 module.exports = router;

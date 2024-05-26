@@ -1,0 +1,51 @@
+<div id="leaderboard" class="leaderboard-container">
+  <header class="leaderboard-header">
+    <h1>
+      <img src="/images/leaderboard.png" alt="Leaderboard" class="leaderboard-image" />
+      Leaderboard
+    </h1>
+  </header>
+
+  <div class="leaderBoard">
+    <div class="userCards">
+      <div class="rank-card">
+        <div class="placedRanked" id="my-rank">
+          <!-- User's rank will be injected here dynamically -->
+        </div>
+        <div class="pointsEarned" id="my-score">
+          <!-- User's points will be injected here dynamically -->
+        </div>
+      </div>
+
+      <div class="top-user-card">
+        <h2>Top User</h2>
+        <div class="top-user">
+          <div class="top-user-details">
+            <div class="top-user-name" id="top-user-name">
+              <!-- Top user name will be injected here dynamically -->
+            </div>
+            <div class="top-user-points" id="top-user-points">
+              <!-- Top user points will be injected here dynamically -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="leaderboard-list">
+  
+      <div class="leaderboard-list-container">
+        <div class="leaderboard-list-header">
+          <div class="leaderboard-list-header-rank">Rank</div>
+          <div class="leaderboard-list-header-name">Name</div>
+          <div class="leaderboard-list-header-points">Points</div>
+        </div>
+        <div class="leaderboard-list-content" id="leaderboard-list-content">
+          <!-- Leaderboard data will be injected here dynamically -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/js/leaderboard.js"></script>

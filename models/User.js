@@ -1,4 +1,3 @@
-// models/User.js
 const { Model, DataTypes } = require("sequelize");
 const sequelize = require("../config/connection");
 const bcrypt = require("bcryptjs");
@@ -30,6 +29,11 @@ User.init(
     password: {
       type: DataTypes.STRING,
       allowNull: false,
+    },
+    points: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
     },
     liked_problems: {
       type: DataTypes.ARRAY(DataTypes.STRING),
