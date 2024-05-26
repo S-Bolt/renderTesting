@@ -9,43 +9,43 @@
     <script src="https://www.youtube.com/iframe_api"></script>
 </head>
 <body>
+    <h1>Problems</h1>
     <div class="problems-container">
-        <table class="problems-table">
-            <thead class="table-head">
+        <table class="text-sm text-left text-gray-500 dark:text-gray-400 sm:w-7/12 w-full max-w-[1200px] mx-auto problems-table">
+            <thead class="text-xs text-gray-700 uppercase dark:text-gray-400 border-b table-head">
                 <tr class="table-row">
-                    <th>Status</th>
-                    <th>Title</th>
-                    <th>Difficulty</th>
-                    <th>Category</th>
-                    <th>Solution</th>
+                    <th scope="col" class="px-1 py-3 w-0 font-medium">Status</th>
+                    <th scope="col" class="px-6 py-3 w-0 font-medium">Title</th>
+                    <th scope="col" class="px-6 py-3 w-0 font-medium">Difficulty</th>
+                    <th scope="col" class="px-6 py-3 w-0 font-medium">Category</th>
+                    <th scope="col" class="px-6 py-3 w-0 font-medium">Solution</th>
                 </tr>
             </thead>
-            <tbody id="problems-table-body">
+            <tbody id="problems-table-body" class="dark:text-white text-black">
                 {{#each problems}}
                 <tr class="problems-table-row">
-                    <td class="status-cell">
+                    <td class="px-2 py-4 font-medium whitespace-nowrap text-dark-green-s status-cell">
                         {{#if solved}}
                         <i class="fas fa-check-circle text-success"></i>
                         {{/if}}
                     </td>
-                    <td class="title-cell">
-                        <a href="/problems/{{id}}" class="problem-link">{{title}}</a>
+                    <td class="px-6 py-4 title-cell">
+                        <a href="/problems/{{id}}" class="hover:text-blue-600 cursor-pointer">{{title}}</a>
                     </td>
-                    <td class="difficulty-cell {{difficulty}}">
+                    <td class="px-6 py-4 difficulty-cell {{difficulty}}">
                         {{difficulty}}
                     </td>
-                    <td style="color: white;">{{category}}</td>
-                    <td class="solution-cell">
+                    <td class="px-6 py-4" style="color: white;">{{category}}</td>
+                    <td class="px-6 py-4 solution-cell">
                         {{#if videoId}}
                         <i class="fas fa-youtube text-danger youtube-icon" data-video-id="{{videoId}}"></i>
                         {{else}}
-                        <p class="text-muted">Coming soon</p>
+                        <p class="text-gray-400">Coming soon</p>
                         {{/if}}
                     </td>
                 </tr>
                 {{/each}}
             </tbody>
-
             <tfoot>
                 <tr>
                     <td colspan="5">

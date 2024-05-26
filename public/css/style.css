@@ -878,6 +878,17 @@ font-size: 0.75rem;
   border-bottom: 1px solid #ccc;
 }
 
+.CodeMirror {
+  height: 450px !important;
+}
+
+.right-container {
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+
+}
+
 .test-case {
   display: none;
 }

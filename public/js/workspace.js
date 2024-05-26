@@ -1,7 +1,6 @@
 document.addEventListener("DOMContentLoaded", async () => {
   const runButton = document.getElementById("runCode");
   const submitButton = document.getElementById("submitCode");
-  const codeInput = document.getElementById("codeInput");
   const testCases = document.querySelectorAll(".test-case");
   const testCaseButtons = document.querySelectorAll(".test-case-btn");
   const problemIdElement = document.getElementById("problemId");
@@ -35,14 +34,12 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
       const submission = await response.json();
       if (submission && submission.code) {
-        codeInput.value = submission.code;
+        codeMirrorEditor.setValue(submission.code);
       }
     } catch (error) {
       console.error("Error fetching saved code:", error);
     }
   }
-
-  setActiveTestCase(activeTestCase);
 
   function setActiveTestCase(index) {
     testCases.forEach((testCase, i) => {
@@ -68,7 +65,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   runButton.addEventListener("click", () => {
-    const userCode = codeInput.value;
+    const userCode = codeMirrorEditor.getValue();
     console.log("User code:", userCode);
 
     let allPassed = true;
@@ -128,7 +125,7 @@ return (function(${functionName}) {
   });
 
   submitButton.addEventListener("click", () => {
-    const userCode = codeInput.value;
+    const userCode = codeMirrorEditor.getValue();
     console.log("Submitting code:", userCode);
 
     fetch("/api/code/submit-code", {
@@ -171,7 +168,7 @@ return (function(${functionName}) {
   async function loadProblem(problemId) {
     const problem = mockProblems.find((p) => p.id === problemId);
     if (problem) {
-      codeInput.value = problem.starter_code;
+      codeMirrorEditor.setValue(problem.starter_code);
       testCases.forEach((testCase, index) => {
         const example = problem.examples[index];
         if (example) {
@@ -205,6 +202,16 @@ return (function(${functionName}) {
     }
     return inputs;
   }
+
+  const codeMirrorEditor = CodeMirror.fromTextArea(
+    document.getElementById("codeEditor"),
+    {
+      mode: "xml",
+      theme: "dracula",
+      lineNumbers: true,
+      lineWrapping: false, // Prevent line wrapping
+    }
+  );
 
   await fetchProblems();
 

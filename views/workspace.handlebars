@@ -1,8 +1,5 @@
 <div class="workspace-container">
   <div class="problem-description">
-    <div class="flex h-11 w-full items-center pt-2 bg-dark-layer-2 text-white overflow-x-hidden">
-      <div class="bg-dark-layer-1 rounded-t-[5px] px-5 py-[10px] text-xs cursor-pointer">Description</div>
-    </div>
     <h1>{{problem.title}}</h1>
     <div class="difficulty {{difficultyClass problem.difficulty}}">
       {{problem.difficulty}}
@@ -26,20 +23,13 @@
   </div>
 
   <div class="right-container">
-    <div class="flex h-11 w-full items-center pt-2 bg-dark-layer-2 text-white overflow-x-hidden">
-      <div class="bg-dark-layer-1 rounded-t-[5px] px-5 py-[10px] text-xs cursor-pointer">Code</div>
-    </div>
     <div class="code-editor">
       <h2>Code</h2>
-      <textarea id="codeInput" rows="10" cols="50">{{problem.starter_code}}</textarea>
+      <textarea id="codeEditor" rows="10" cols="50">{{problem.starter_code}}</textarea>
       <div class="editor-buttons">
         <button id="runCode">Run</button>
         <button id="submitCode">Submit</button>
       </div>
-    </div>
-
-    <div class="flex h-11 w-full items-center pt-2 bg-dark-layer-2 text-white overflow-x-hidden">
-      <div class="bg-dark-layer-1 rounded-t-[5px] px-5 py-[10px] text-xs cursor-pointer">Test Cases</div>
     </div>
     <div class="test-cases">
       <h2>Test Cases</h2>
@@ -58,8 +48,18 @@
       {{/each}}
     </div>
   </div>
+
+  <!-- Modal -->
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <p id="modal-message">Congrats! All Passed!</p>
+    </div>
+  </div>
 </div>
 
 <input type="hidden" id="problemId" value="{{problem.id}}">
 
 <script type="module" src="/js/workspace.js"></script>
+
+
