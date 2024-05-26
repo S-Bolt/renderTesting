@@ -1,25 +1,57 @@
 <div class="workspace-container">
-  <div class="problem-description">
-    <h1>{{problem.title}}</h1>
-    <div class="difficulty {{difficultyClass problem.difficulty}}">
-      {{problem.difficulty}}
-    </div>
-    <div class="problem-statement">{{{problem.problem_statement}}}</div>
-
-    <h2>Examples</h2>
-    {{#each problem.examples}}
-      <div class="example">
-        <h3>Example {{@index}}</h3>
-        <p><strong>Input:</strong> {{{this.inputText}}}</p>
-        <p><strong>Output:</strong> {{{this.outputText}}}</p>
-        {{#if this.explanation}}
-          <p><strong>Explanation:</strong> {{{this.explanation}}}</p>
-        {{/if}}
+  <div class="left-container">
+    <div class="problem-description">
+      <h1>{{problem.title}}</h1>
+      <div class="difficulty {{difficultyClass problem.difficulty}}">
+        {{problem.difficulty}}
       </div>
-    {{/each}}
+      <div class="problem-statement">{{{problem.problem_statement}}}</div>
 
-    <h2>Constraints</h2>
-    <ul>{{{problem.constraints}}}</ul>
+      <h2>Examples</h2>
+      {{#each problem.examples}}
+        <div class="example">
+          <h3>Example {{@index}}</h3>
+          <p><strong>Input:</strong> {{{this.inputText}}}</p>
+          <p><strong>Output:</strong> {{{this.outputText}}}</p>
+          {{#if this.explanation}}
+            <p><strong>Explanation:</strong> {{{this.explanation}}}</p>
+          {{/if}}
+        </div>
+      {{/each}}
+
+      <h2>Constraints</h2>
+      <ul>{{{problem.constraints}}}</ul>
+    </div>
+
+    <!-- Comment Section -->
+    <div class="comment-section hidden" id="comment-section">
+      <h2>Leave a Comment</h2>
+      <form id="comment-form">
+        <textarea id="comment-content" rows="3" placeholder="Write your comment here..."></textarea>
+        <button type="submit">Submit Comment</button>
+      </form>
+      <div id="comments-list"></div>
+    </div>
+
+    <!-- Feedback Section -->
+    <div class="feedback-section">
+      <div class="likes-container">
+        <button class="feedback-btn" id="thumbs-up-toggle" aria-label="Thumbs up" data-ripple>
+          <i class="fa-regular fa-thumbs-up thumbs-up-icon" aria-hidden="true"></i>
+          <div class="state-layer"></div>
+        </button>
+        <button class="feedback-btn" id="thumbs-down-toggle" aria-label="Thumbs down" data-ripple>
+          <i class="fa-regular fa-thumbs-down thumbs-down-icon" aria-hidden="true"></i>
+          <div class="state-layer"></div>
+        </button>
+      </div>
+      <div class="comments-container">
+        <button class="feedback-btn" id="comment-toggle" aria-label="Comment" data-ripple>
+          <i class="fa-regular fa-comment comment-bubble-icon" aria-hidden="true"></i>
+          <div class="state-layer"></div>
+        </button>
+      </div>
+    </div>
   </div>
 
   <div class="right-container">
@@ -61,5 +93,3 @@
 <input type="hidden" id="problemId" value="{{problem.id}}">
 
 <script type="module" src="/js/workspace.js"></script>
-
-

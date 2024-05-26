@@ -5,6 +5,13 @@ document.addEventListener("DOMContentLoaded", async () => {
   const testCaseButtons = document.querySelectorAll(".test-case-btn");
   const problemIdElement = document.getElementById("problemId");
   const problemId = problemIdElement ? problemIdElement.value : null;
+  const thumbsUpIcon = document.querySelector(".thumbs-up-icon");
+  const thumbsDownIcon = document.querySelector(".thumbs-down-icon");
+  const thumbsUpToggle = document.getElementById("thumbs-up-toggle");
+  const thumbsDownToggle = document.getElementById("thumbs-down-toggle");
+  const commentToggle = document.getElementById("comment-toggle");
+  const commentSection = document.getElementById("comment-section");
+  const leftContainer = document.querySelector(".left-container");
 
   let activeTestCase = 0;
   let mockProblems = [];
@@ -215,6 +222,75 @@ return (function(${functionName}) {
 
   await fetchProblems();
 
+  // Toggle comment section visibility and scroll into view
+  commentToggle.addEventListener("click", () => {
+    commentSection.classList.toggle("hidden");
+    if (!commentSection.classList.contains("hidden")) {
+      commentSection.style.height = "100%";
+      leftContainer.style.overflowY = "scroll";
+      commentSection.scrollIntoView({ behavior: "smooth" });
+    } else {
+      commentSection.style.height = "auto";
+      leftContainer.style.overflowY = "auto";
+    }
+  });
+
+  // Handle comment form submission
+  document.getElementById("comment-form").addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const content = document.getElementById("comment-content").value.trim();
+    if (!content) return;
+
+    try {
+      const response = await fetch("/api/comments", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ problem_id: problemId, content }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      document.getElementById("comment-content").value = "";
+      fetchComments();
+    } catch (error) {
+      console.error("Error submitting comment:", error);
+    }
+  });
+
+  const fetchComments = async () => {
+    try {
+      const response = await fetch(`/api/comments/${problemId}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const comments = await response.json();
+      displayComments(comments);
+    } catch (error) {
+      console.error("Error fetching comments:", error);
+    }
+  };
+
+  const displayComments = (comments) => {
+    const commentsList = document.getElementById("comments-list");
+    commentsList.innerHTML = "";
+    comments.forEach(comment => {
+      const commentDiv = document.createElement("div");
+      commentDiv.classList.add("comment");
+      commentDiv.innerHTML = `
+        <p><strong>${comment.user.username}</strong> said:</p>
+        <p>${comment.content}</p>
+        <p class="comment-time">${new Date(comment.created_at).toLocaleString()}</p>
+      `;
+      commentsList.appendChild(commentDiv);
+    });
+  };
+
+  await fetchComments();
+
   // Toastify logic
   function showToast(message, type = "success") {
     const toastClass =
@@ -249,4 +325,24 @@ return (function(${functionName}) {
       }, 600); // Match this duration with the toastCloseAnimation duration
     }, 2000);
   }
+
+  thumbsUpToggle.addEventListener("click", function () {
+    if (thumbsUpIcon.classList.contains("fa-regular")) {
+      thumbsUpIcon.classList.remove("fa-regular");
+      thumbsUpIcon.classList.add("fa-solid");
+    } else {
+      thumbsUpIcon.classList.remove("fa-solid");
+      thumbsUpIcon.classList.add("fa-regular");
+    }
+  });
+
+  thumbsDownToggle.addEventListener("click", function () {
+    if (thumbsDownIcon.classList.contains("fa-regular")) {
+      thumbsDownIcon.classList.remove("fa-regular");
+      thumbsDownIcon.classList.add("fa-solid");
+    } else {
+      thumbsDownIcon.classList.remove("fa-solid");
+      thumbsDownIcon.classList.add("fa-regular");
+    }
+  });
 });
