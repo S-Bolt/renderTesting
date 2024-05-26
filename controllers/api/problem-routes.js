@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const { Problem, User } = require("../../models");
 const withAuth = require("../../utils/auth.js");
-const { getProblems, getProblemById } = require("../problemController");
+const { getProblems, getProblemById, solveProblem } = require("../problemController");
 const mockProblems = require("../../seeds/mockProblems.js");
 
 router.get("/mockProblems", (req, res) => {
@@ -127,5 +127,9 @@ router.get("/:id/feedback", async (req, res) => {
     res.status(500).json(err);
   }
 });
+
+// Endpoint to handle problem solving and points update
+router.post("/:id/solve", withAuth, solveProblem);
+
 
 module.exports = router;

@@ -133,37 +133,50 @@ return (function(${functionName}) {
     }
   });
 
-  submitButton.addEventListener("click", () => {
+  submitButton.addEventListener("click", async () => {
     const userCode = codeMirrorEditor.getValue();
     console.log("Submitting code:", userCode);
 
-    fetch("/api/code/submit-code", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ code: userCode, problemId }),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((data) => {
-        const results = data.results;
-        if (results) {
-          jsConfetti.addConfetti(); // Trigger confetti effect
-          showToast("Congrats! All test cases passed!", "success");
-        } else {
-          showToast("Some test cases failed.", "error");
-        }
-      })
-      .catch((error) => {
-        console.error("Submit error:", error);
-        showToast(`Error: ${error.message}`, "error");
+    try {
+      const response = await fetch(`/api/code/submit-code`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ code: userCode, problemId }),
       });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      const results = data.results;
+
+      if (results) {
+        jsConfetti.addConfetti(); // Trigger confetti effect
+        showToast("Congrats! All test cases passed!", "success");
+
+        // Call the solveProblem endpoint to update points
+        const solveResponse = await fetch(`/api/problems/${problemId}/solve`, {
+          method: "POST",
+        });
+
+        if (!solveResponse.ok) {
+          throw new Error(`HTTP error! status: ${solveResponse.status}`);
+        }
+
+        const solveData = await solveResponse.json();
+        console.log(`Updated points: ${solveData.points}`);
+      } else {
+        showToast("Some test cases failed.", "error");
+      }
+    } catch (error) {
+      console.error("Submit error:", error);
+      showToast(`Error: ${error.message}`, "error");
+    }
   });
+
 
   function getFunctionName(problemId) {
     const problem = mockProblems.find((p) => p.id === problemId);

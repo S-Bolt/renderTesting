@@ -79,4 +79,25 @@ router.get("/session-status", (req, res) => {
   res.json(req.session);
 });
 
+router.get("/current-user", async (req, res) => {
+  try {
+    if (!req.session.user_id) {
+      return res.status(401).json({ error: "Not logged in" });
+    }
+
+    const user = await User.findByPk(req.session.user_id, {
+      attributes: ["username", "points"],
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.json(user);
+  } catch (err) {
+    console.error("Error fetching current user:", err);
+    res.status(500).json({ error: "Failed to fetch current user" });
+  }
+});
+
 module.exports = router;
