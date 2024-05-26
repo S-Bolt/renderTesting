@@ -28,7 +28,7 @@
       <h2>Leave a Comment</h2>
       <form id="comment-form">
         <textarea id="comment-content" rows="3" placeholder="Write your comment here..."></textarea>
-        <button type="submit">Submit Comment</button>
+        <button type="submit" style="float: right;">Submit Comment</button>
       </form>
       <div id="comments-list"></div>
     </div>
@@ -39,10 +39,14 @@
         <button class="feedback-btn" id="thumbs-up-toggle" aria-label="Thumbs up" data-ripple>
           <i class="fa-regular fa-thumbs-up thumbs-up-icon" aria-hidden="true"></i>
           <div class="state-layer"></div>
+          <span id="likes-count">0</span> <!-- Likes counter -->
+
         </button>
         <button class="feedback-btn" id="thumbs-down-toggle" aria-label="Thumbs down" data-ripple>
           <i class="fa-regular fa-thumbs-down thumbs-down-icon" aria-hidden="true"></i>
           <div class="state-layer"></div>
+          <span id="dislikes-count">0</span> <!-- Dislikes counter -->
+
         </button>
       </div>
       <div class="comments-container">

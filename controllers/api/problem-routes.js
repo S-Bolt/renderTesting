@@ -21,6 +21,7 @@ router.post("/", withAuth, async (req, res) => {
 
     res.status(200).json(newProblem);
   } catch (err) {
+    console.error("Error creating problem:", err);
     res.status(400).json(err);
   }
 });
@@ -42,6 +43,7 @@ router.put("/:id", withAuth, async (req, res) => {
 
     res.status(200).json(problemData);
   } catch (err) {
+    console.error("Error updating problem:", err);
     res.status(500).json(err);
   }
 });
@@ -63,6 +65,65 @@ router.delete("/:id", withAuth, async (req, res) => {
 
     res.status(200).json(problemData);
   } catch (err) {
+    console.error("Error deleting problem:", err);
+    res.status(500).json(err);
+  }
+});
+
+// Like a problem
+router.post("/:id/like", withAuth, async (req, res) => {
+  try {
+    const problem = await Problem.findByPk(req.params.id);
+    if (!problem) {
+      res.status(404).json({ message: "No problem found with this id!" });
+      return;
+    }
+    problem.increment("likes");
+    await problem.save();
+    console.log(
+      `Problem ${req.params.id} liked. Total likes: ${problem.likes}`
+    );
+    res.json(problem);
+  } catch (err) {
+    console.error("Error liking problem:", err);
+    res.status(500).json(err);
+  }
+});
+
+// Dislike a problem
+router.post("/:id/dislike", withAuth, async (req, res) => {
+  try {
+    const problem = await Problem.findByPk(req.params.id);
+    if (!problem) {
+      res.status(404).json({ message: "No problem found with this id!" });
+      return;
+    }
+    problem.increment("dislikes");
+    await problem.save();
+    console.log(
+      `Problem ${req.params.id} disliked. Total dislikes: ${problem.dislikes}`
+    );
+    res.json(problem);
+  } catch (err) {
+    console.error("Error disliking problem:", err);
+    res.status(500).json(err);
+  }
+});
+
+// Get feedback (likes and dislikes) for a problem
+router.get("/:id/feedback", async (req, res) => {
+  try {
+    const problem = await Problem.findByPk(req.params.id);
+    if (!problem) {
+      res.status(404).json({ message: "No problem found with this id!" });
+      return;
+    }
+    res.json({
+      likes: problem.likes,
+      dislikes: problem.dislikes,
+    });
+  } catch (err) {
+    console.error("Error fetching problem feedback:", err);
     res.status(500).json(err);
   }
 });

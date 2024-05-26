@@ -1282,7 +1282,7 @@ a.dropdown-item{
 /*-----------------------------------*\
   #WORKSPACE
 \*-----------------------------------*/
-
+/* 
 .top-app-bar {
   background-color: var(--header);
   display: flex;
@@ -1294,7 +1294,7 @@ a.dropdown-item{
   width: 100%;
   z-index: 4;
   transition: background-color var(--motion-duration-short-2) var(--motion-easing-linear);
-}
+} */
 .workspace-container {
   display: flex;
   flex-direction: row;
@@ -1339,7 +1339,7 @@ a.dropdown-item{
   justify-content: center;
   position: relative;
   padding: 5px; /* Decrease padding for smaller buttons */
-  font-size: 1em; /* Set font size for icons */
+  font-size: 1.2em; /* Set font size for icons */
 }
 
 .feedback-btn .state-layer {
@@ -1411,9 +1411,10 @@ a.dropdown-item{
   margin: 0;
 }
 
-
-
-
+#likes-count,
+#dislikes-count {
+  margin-left: 10px;
+}
 
 
 .code-editor,
