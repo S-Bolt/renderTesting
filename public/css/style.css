@@ -1323,7 +1323,7 @@ textarea { resize: vertical; }
 }
 .difficulty-cell.Medium,
 .difficulty.Medium {
-    color: yellow;
+    color: orange;
 }
 .difficulty-cell.Hard,
 .difficulty.Hard {
