@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const { Problem, User } = require("../../models");
-const withAuth = require("../../utils/auth.js");
+const withAuth = require("../../public/utils/auth.js");
 const { getProblems, getProblemById, solveProblem } = require("../problemController");
 const mockProblems = require("../../seeds/mockProblems.js");
 

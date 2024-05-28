@@ -1,3 +1,6 @@
+import { ripple } from "./ripple.js";
+import { addEventOnElements } from "../utils/event.js";
+
 const $header = document.querySelector("[data-header]");
 
 window.addEventListener("scroll", () => {
@@ -6,6 +9,33 @@ window.addEventListener("scroll", () => {
   }
 });
 
+const $rippleElems = document.querySelectorAll("[data-ripple]");
+$rippleElems.forEach(($rippleElem) => ripple($rippleElem));
+
+const $navTogglers = document.querySelectorAll("[data-nav-toggler]");
+const $defaultSidebar = document.querySelector("[data-sidebar='default']");
+const $dashboardSidebar = document.querySelector("[data-sidebar='dashboard']");
+const $scrim = document.querySelector("[data-scrim]");
+
+function toggleSidebar() {
+  const isDashboardPage = window.location.pathname.startsWith("/dashboard");
+
+  if (isDashboardPage) {
+    if ($dashboardSidebar) {
+      $dashboardSidebar.classList.toggle("show");
+    }
+  } else {
+    if ($defaultSidebar) {
+      $defaultSidebar.classList.toggle("show");
+    }
+  }
+
+  if ($scrim) {
+    $scrim.classList.toggle("active");
+  }
+}
+
+addEventOnElements($navTogglers, "click", toggleSidebar);
 
 window.addEventListener("loadstart", function () {
   document.body.style.opacity = "0";

@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const { capitalize } = require("../../utils/helpers");
+const { capitalize } = require("../../public/utils/helpers.js");
 const problemHandlers = require("../../public/js/problemHandlers.js");
 const { UserProblem } = require("../../models");
 
