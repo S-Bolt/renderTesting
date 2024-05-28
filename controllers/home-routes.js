@@ -116,7 +116,7 @@ router.get("/signUp", (req, res) => {
 });
 
 // Render the leaderboard view
-router.get("/leaderboard", async (req, res) => {
+router.get("/leaderboard", withAuth, async (req, res) => {
   try {
     const users = await User.findAll({
       attributes: ["username", "points"],
@@ -156,5 +156,6 @@ router.get("/dashboard", withAuth, async (req, res) => {
     res.status(500).json(err);
   }
 });
+
 
 module.exports = router;
