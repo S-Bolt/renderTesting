@@ -103,21 +103,19 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // Logout functionality
   if (logoutButton) {
-    logoutButton.addEventListener("click", () => {
-      fetch("/api/logout", {
+    logoutButton.addEventListener("click", async () => {
+      const response = await fetch("/api/users/logout", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-      })
-        .then((response) => {
-          if (response.ok) {
-            window.location.href = "/";
-          } else {
-            alert("Failed to log out. Please try again.");
-          }
-        })
-        .catch((error) => console.error("Error logging out:", error));
+      });
+
+      if (response.ok) {
+        window.location.href = "/";
+      } else {
+        alert("Failed to log out. Please try again.");
+      }
     });
   }
 

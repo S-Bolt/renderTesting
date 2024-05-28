@@ -1,6 +1,20 @@
 // controllers/api/user-routes.js
 const router = require("express").Router();
 const { User } = require("../../models");
+const multer = require("multer");
+const path = require("path");
+const withAuth = require("../../public/utils/auth.js");
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "public/uploads/");
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));
+  },
+});
+
+const upload = multer({ storage: storage });
 
 router.post("/", async (req, res) => {
   try {
@@ -74,7 +88,7 @@ router.post("/logout", (req, res) => {
   }
 });
 
-// Add this route to check session status
+
 router.get("/session-status", (req, res) => {
   res.json(req.session);
 });
@@ -98,6 +112,52 @@ router.get("/current-user", async (req, res) => {
     console.error("Error fetching current user:", err);
     res.status(500).json({ error: "Failed to fetch current user" });
   }
+});
+
+router.post("/upload", upload.single("file"), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: "No file uploaded" });
+  }
+  res.json({ url: `/uploads/${req.file.filename}` });
+});
+
+router.put("/update", withAuth, async (req, res) => {
+  try {
+    const { username, email, password, profilePicture } = req.body;
+
+    const updateData = { username, email, profilePicture };
+    if (password) {
+      updateData.password = password;
+    }
+
+    await User.update(updateData, {
+      where: { id: req.session.user_id },
+    });
+
+    res.json({ message: "Profile updated successfully" });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to update profile" });
+  }
+});
+
+router.delete("/delete", withAuth, async (req, res) => {
+  try {
+    await User.destroy({
+      where: { id: req.session.user_id },
+    });
+
+    req.session.destroy(() => {
+      res.json({ message: "Account deleted successfully" });
+    });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to delete account" });
+  }
+});
+
+router.post("/signout", withAuth, (req, res) => {
+  req.session.destroy(() => {
+    res.json({ message: "Signed out successfully" });
+  });
 });
 
 module.exports = router;
