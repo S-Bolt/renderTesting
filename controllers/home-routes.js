@@ -1,7 +1,6 @@
-// controllers/home-routes.js
 const router = require("express").Router();
 const { User, Problem, UserProblem } = require("../models");
-const withAuth = require("../utils/auth");
+const withAuth = require("../public/utils/auth.js");
 const { Op } = require("sequelize");
 
 // Route for displaying the homepage with problems
@@ -59,6 +58,7 @@ router.get("/", async (req, res) => {
       username: user ? user.username : null,
       logged_in: req.session.logged_in,
       problems,
+      isDashboard: false, // Not a dashboard page
     });
   } catch (err) {
     console.error(err);
@@ -90,6 +90,7 @@ router.get("/problems/:id", withAuth, async (req, res) => {
       logged_in: req.session.logged_in,
       bodyClass: "workspace-body",
       problems: allProblems.map((p) => p.get({ plain: true })),
+      isDashboard: false, // Not a dashboard page
     });
   } catch (err) {
     res.status(500).json(err);
@@ -102,7 +103,7 @@ router.get("/login", (req, res) => {
     res.redirect("/homepage");
     return;
   }
-  res.render("login");
+  res.render("login", { isDashboard: false }); // Not a dashboard page
 });
 
 // Route for displaying the sign-up page
@@ -111,23 +112,24 @@ router.get("/signUp", (req, res) => {
     res.redirect("/");
     return;
   }
-  res.render("signUp");
+  res.render("signUp", { isDashboard: false }); // Not a dashboard page
 });
 
 // Render the leaderboard view
 router.get("/leaderboard", async (req, res) => {
   try {
     const users = await User.findAll({
-      attributes: ['username', 'points'],
-      order: [['points', 'DESC']],
+      attributes: ["username", "points"],
+      order: [["points", "DESC"]],
       limit: 10, // Adjust the limit as needed
     });
 
-    const leaderboardData = users.map(user => user.get({ plain: true }));
+    const leaderboardData = users.map((user) => user.get({ plain: true }));
 
     res.render("leaderboard", {
       leaderboard: leaderboardData,
       logged_in: req.session.logged_in,
+      isDashboard: false, // Not a dashboard page
     });
   } catch (err) {
     console.error("Error rendering leaderboard:", err);
@@ -135,5 +137,24 @@ router.get("/leaderboard", async (req, res) => {
   }
 });
 
+// Route for displaying the dashboard page
+router.get("/dashboard", withAuth, async (req, res) => {
+  try {
+    const userData = await User.findByPk(req.session.user_id, {
+      attributes: { exclude: ["password"] },
+    });
+
+    const user = userData.get({ plain: true });
+
+    res.render("dashboard", {
+      user,
+      logged_in: req.session.logged_in,
+      isDashboard: true, // Dashboard page
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json(err);
+  }
+});
 
 module.exports = router;
