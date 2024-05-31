@@ -157,5 +157,53 @@ router.get("/dashboard", withAuth, async (req, res) => {
   }
 });
 
+router.get("/problems", withAuth, async (req, res) => {
+  try {
+    const problems = await Problem.findAll({
+      include: [
+        {
+          model: User,
+          attributes: ["username"],
+        },
+      ],
+    });
+
+    const userProblems = await UserProblem.findAll({
+      where: {
+        user_id: req.session.user_id,
+      },
+    });
+
+    const solvedProblems = userProblems.map((userProblem) => userProblem.problem_id);
+
+    const problemsData = problems.map((problem) => {
+      const plainProblem = problem.get({ plain: true });
+      plainProblem.solved = solvedProblems.includes(problem.id);
+      plainProblem.difficultyColor =
+        problem.difficulty === "Easy"
+          ? "text-success"
+          : problem.difficulty === "Medium"
+          ? "text-warning"
+          : "text-danger";
+      return plainProblem;
+    });
+
+    res.render("problems", {
+      problems: problemsData,
+      logged_in: req.session.logged_in,
+      isDashboard: true, // Dashboard page
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json(err);
+  }
+}
+
+
+
+
+);
+
+
 
 module.exports = router;

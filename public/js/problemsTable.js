@@ -1,11 +1,12 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const titleElement = document.querySelector(".problem-title");
-  const descriptionElement = document.querySelector(".problem-description");
 
-  if (!titleElement || !descriptionElement) {
-    console.error("Title or description element not found");
-    return;
-  }
+  document.addEventListener("DOMContentLoaded", function() {
+    var titleElement = document.getElementById("problem-title");
+    var descriptionElement = document.getElementById("problem-description");
+    if (!titleElement || !descriptionElement) {
+        console.error("Title or description element not found")
+        return;
+    }
+  
 
   const problemsTableBody = document.getElementById("problems-table-body");
   const prevPageBtn = document.getElementById("prev-page");
