@@ -1,5 +1,26 @@
 const Handlebars = require("handlebars");
 
+const problemIdToHandlerMap = {
+  1: "handlerTwoSum",
+  2: "handlerReverseLinkedList",
+  3: "handlerJumpGame",
+  4: "handlerValidParentheses",
+  5: "handlerSearchMatrix",
+  6: "handlerMaxArea",
+  8: "handlerMergeIntervals",
+  9: "handlerMaxDepth",
+  7: "handlerMaxProfit",
+  10: "handlerSubsets",
+  11: "handlerMaxSubArray",
+  default: "defaultHandler",
+};
+
+const togglePassword = (id) => {
+  const input = document.getElementById(id);
+  const type = input.getAttribute("type") === "password" ? "text" : "password";
+  input.setAttribute("type", type);
+};
+
 module.exports = {
   format_date: (date) => {
     if (!date) return "";
@@ -27,12 +48,8 @@ module.exports = {
         return "";
     }
   },
-  capitalize: (str) => {
-    return str
-      .split("-")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join("");
-  },
+  capitalize: (str) => problemIdToHandlerMap[str] || str,
+  togglePassword, // Make sure to export the function
 };
 
 Handlebars.registerHelper("ifEquals", (arg1, arg2, options) => {
@@ -50,4 +67,8 @@ Handlebars.registerHelper("difficultyClass", (difficulty) => {
     default:
       return "";
   }
+});
+
+Handlebars.registerHelper("inc", function (value) {
+  return parseInt(value) + 1;
 });

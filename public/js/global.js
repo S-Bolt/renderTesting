@@ -17,7 +17,7 @@ const $defaultSidebar = document.querySelector("[data-sidebar='default']");
 const $dashboardSidebar = document.querySelector("[data-sidebar='dashboard']");
 const $scrim = document.querySelector("[data-scrim]");
 
-function toggleSidebar() {
+function toggleSidebar(event) {
   const isDashboardPage = window.location.pathname.startsWith("/dashboard");
 
   if (isDashboardPage) {
@@ -33,6 +33,9 @@ function toggleSidebar() {
   if ($scrim) {
     $scrim.classList.toggle("active");
   }
+
+  // Prevent the event from propagating to other elements
+  event.stopPropagation();
 }
 
 addEventOnElements($navTogglers, "click", toggleSidebar);
