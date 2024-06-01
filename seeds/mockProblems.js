@@ -1,11 +1,10 @@
 const mockProblems = [
   {
-    id: "two-sum",
     title: "Two Sum",
     difficulty: "Easy",
     category: "Array",
     order: 1,
-    videoId: "8-k1C6ehKuw",
+    video_id: "8-k1C6ehKuw", // Ensure this is set
     problem_statement: `<p class='mt-3'>Given an array of integers <code>nums</code> and an integer <code>target</code>, return
       <em>indices of the two numbers such that they add up to</em> <code>target</code>.
       </p>
@@ -91,7 +90,6 @@ const mockProblems = [
     starter_function_name: "function twoSum(",
   },
   {
-    id: "reverse-linked-list",
     title: "Reverse Linked List",
     difficulty: "Hard",
     category: "Linked List",
@@ -183,7 +181,6 @@ const mockProblems = [
     starter_function_name: "function reverseLinkedList(",
   },
   {
-    id: "jump-game",
     title: "Jump Game",
     difficulty: "Medium",
     category: "Dynamic Programming",
@@ -240,12 +237,11 @@ const mockProblems = [
     starter_function_name: "function canJump(",
   },
   {
-    id: "valid-parentheses",
     title: "Valid Parentheses",
     difficulty: "Easy",
     category: "Stack",
     order: 4,
-    videoId: "xty7fr-k0TU",
+    video_id: "xty7fr-k0TU",
     problem_statement: `<p class='mt-3'>Given a string <code>s</code> containing just the characters <code>'('</code>, <code>')'</code>, <code>'{'</code>, <code>'}'</code>, <code>'['</code> and <code>']'</code>, determine if the input string is valid.</p> <p class='mt-3'>An input string is valid if:</p> <ul class='list-disc pl-10'><li class='mt-2'>Open brackets must be closed by the same type of brackets.</li><li class='mt-2'>Open brackets must be closed in the correct order.</li></ul>`,
     examples: [
       {
@@ -288,7 +284,6 @@ const mockProblems = [
     starter_function_name: "function isValid(",
   },
   {
-    id: "search-a-2d-matrix",
     title: "Search a 2D Matrix",
     difficulty: "Medium",
     category: "Binary Search",
@@ -339,7 +334,6 @@ const mockProblems = [
     starter_function_name: "function searchMatrix(",
   },
   {
-    id: "container-with-most-water",
     title: "Container With Most Water",
     difficulty: "Medium",
     category: "Two Pointers",
@@ -391,7 +385,6 @@ const mockProblems = [
     starter_function_name: "function maxArea(",
   },
   {
-    id: "merge-intervals",
     title: "Merge Intervals",
     difficulty: "Medium",
     category: "Intervals",
@@ -444,7 +437,6 @@ const mockProblems = [
     starter_function_name: "function merge(",
   },
   {
-    id: "maximum-depth-of-binary-tree",
     title: "Maximum Depth of Binary Tree",
     difficulty: "Easy",
     category: "Tree",
@@ -527,12 +519,11 @@ const mockProblems = [
     starter_function_name: "function maxDepth(",
   },
   {
-    id: "best-time-to-buy-and-sell-stock",
     title: "Best Time to Buy and Sell Stock",
     difficulty: "Easy",
     category: "Array",
     order: 9,
-    videoId: "excAOvwF_Wk",
+    video_id: "excAOvwF_Wk",
     problem_statement: `<p class='mt-3'>You are given an array <code>prices</code> where <code>prices[i]</code> is the price of a given stock on the <code>i<sup>th</sup></code> day.</p>
     <p class='mt-3'>You want to maximize your profit by choosing a single day to buy one stock and choosing a different day in the future to sell that stock.</p>
     <p class='mt-3'>Return <em>the maximum profit you can achieve from this transaction</em>. If you cannot achieve any profit, return <code>0</code>.</p>`,
@@ -581,7 +572,6 @@ const mockProblems = [
     starter_function_name: "function maxProfit(",
   },
   {
-    id: "subsets",
     title: "Subsets",
     difficulty: "Medium",
     category: "Dynamic Programming",

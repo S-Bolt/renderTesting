@@ -1,31 +1,51 @@
-
-  document.addEventListener("DOMContentLoaded", function() {
-    var titleElement = document.getElementById("problem-title");
-    var descriptionElement = document.getElementById("problem-description");
-    if (!titleElement || !descriptionElement) {
-        console.error("Title or description element not found")
-        return;
-    }
-  
-
+document.addEventListener("DOMContentLoaded", async () => {
   const problemsTableBody = document.getElementById("problems-table-body");
   const prevPageBtn = document.getElementById("prev-page");
   const nextPageBtn = document.getElementById("next-page");
   const pageNumbersContainer = document.getElementById("page-numbers");
-  const youtubeModal = document.getElementById("youtube-modal");
-  const youtubePlayerContainer = document.getElementById("youtube-player");
-  const closeBtn = document.querySelector(".close-btn");
 
   let currentPage = 1;
   const problemsPerPage = 10;
-  let filteredProblems = problems;
+  let problems = [];
+  let solvedProblems = [];
+
+  async function fetchProblems() {
+    try {
+      const response = await fetch("/api/problems");
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      problems = await response.json();
+      renderTable();
+      renderPagination();
+    } catch (error) {
+      console.error("Error fetching problems:", error);
+    }
+  }
+
+  async function fetchSolvedProblems() {
+    try {
+      const response = await fetch("/api/users/problems/solved");
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      solvedProblems = await response.json();
+    } catch (error) {
+      console.error("Error fetching solved problems:", error);
+    }
+  }
+
+  async function init() {
+    await fetchSolvedProblems();
+    await fetchProblems();
+  }
 
   function renderTable() {
-    const startIndex = (currentPage - 1) * problemsPerPage;
-    const endIndex = currentPage * problemsPerPage;
-    const problemsToDisplay = filteredProblems.slice(startIndex, endIndex);
+    const start = (currentPage - 1) * problemsPerPage;
+    const end = start + problemsPerPage;
+    const currentProblems = problems.slice(start, end);
 
-    problemsTableBody.innerHTML = problemsToDisplay
+    problemsTableBody.innerHTML = currentProblems
       .map((problem) => {
         const isSolved = solvedProblems.includes(problem.id);
         const difficultyClass =
@@ -36,40 +56,37 @@
             : "text-danger";
 
         return `
-                <tr>
-                    <td class="status-cell">
-                        ${
-                          isSolved
-                            ? '<i class="fas fa-check-circle text-success"></i>'
-                            : ""
-                        }
-                    </td>
-                    <td>
-                        <a href="/problems/${
-                          problem.id
-                        }" class="problem-link">${problem.title}</a>
-                    </td>
-                    <td class="difficulty-cell ${difficultyClass}">
-                        ${problem.difficulty}
-                    </td>
-                    <td style="color: white;">${problem.category}</td>
-                    <td>
-                        ${
-                          problem.videoId
-                            ? `<i class="fas fa-youtube text-danger youtube-icon" data-video-id="${problem.videoId}"></i>`
-                            : '<p class="text-muted">Coming soon</p>'
-                        }
-                    </td>
-                </tr>
-            `;
+          <tr class="problems-table-row">
+            <td class="status-cell">
+              ${
+                isSolved
+                  ? '<i class="fas fa-check-circle text-success"></i>'
+                  : ""
+              }
+            </td>
+            <td class="title-cell">
+              <a href="/problems/${problem.id}" class="problem-link">${
+          problem.title
+        }</a>
+            </td>
+            <td class="difficulty-cell ${difficultyClass}">
+              ${problem.difficulty}
+            </td>
+            <td>${problem.category}</td>
+            <td class="solution-cell">
+              ${
+                problem.video_id
+                  ? `<i class="fab fa-youtube text-danger youtube-icon" data-video-id="${problem.video_id}"></i>`
+                  : '<p class="text-muted">Coming soon</p>'
+              }
+            </td>
+          </tr>`;
       })
       .join("");
-
-    renderPagination();
   }
 
   function renderPagination() {
-    const totalPages = Math.ceil(filteredProblems.length / problemsPerPage);
+    const totalPages = Math.ceil(problems.length / problemsPerPage);
     pageNumbersContainer.innerHTML = "";
 
     for (let i = 1; i <= totalPages; i++) {
@@ -81,6 +98,7 @@
       pageBtn.addEventListener("click", () => {
         currentPage = i;
         renderTable();
+        renderPagination();
       });
       pageNumbersContainer.appendChild(pageBtn);
     }
@@ -93,39 +111,46 @@
     if (currentPage > 1) {
       currentPage--;
       renderTable();
+      renderPagination();
     }
   });
 
   nextPageBtn.addEventListener("click", () => {
-    if (currentPage < Math.ceil(filteredProblems.length / problemsPerPage)) {
+    if (currentPage < Math.ceil(problems.length / problemsPerPage)) {
       currentPage++;
       renderTable();
+      renderPagination();
     }
   });
 
   problemsTableBody.addEventListener("click", (event) => {
     if (event.target.classList.contains("youtube-icon")) {
-      const videoId = event.target.getAttribute("data-video-id");
-      openYouTubeModal(videoId);
+      const video_id = event.target.getAttribute("data-video-id");
+      openYouTubeModal(video_id);
     }
   });
 
-  closeBtn.addEventListener("click", () => {
+  function openYouTubeModal(video_id) {
+    const youtubeModal = document.getElementById("youtube-modal");
+    const youtubePlayerContainer = document.getElementById("youtube-player");
+    youtubeModal.style.display = "flex";
+    youtubePlayerContainer.innerHTML = `<iframe width="560" height="315" src="https://www.youtube.com/embed/${video_id}" frameborder="0" allowfullscreen></iframe>`;
+  }
+
+  document.querySelector(".close-btn").addEventListener("click", () => {
+    const youtubeModal = document.getElementById("youtube-modal");
+    const youtubePlayerContainer = document.getElementById("youtube-player");
     youtubeModal.style.display = "none";
     youtubePlayerContainer.innerHTML = "";
   });
 
   window.addEventListener("click", (event) => {
+    const youtubeModal = document.getElementById("youtube-modal");
     if (event.target === youtubeModal) {
       youtubeModal.style.display = "none";
       youtubePlayerContainer.innerHTML = "";
     }
   });
 
-  function openYouTubeModal(videoId) {
-    youtubeModal.style.display = "block";
-    youtubePlayerContainer.innerHTML = `<iframe width="560" height="315" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>`;
-  }
-
-  renderTable();
+  init();
 });

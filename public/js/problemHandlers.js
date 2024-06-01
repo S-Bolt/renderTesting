@@ -346,6 +346,30 @@ const handlerSubsets = async (source_code) => {
   }
 };
 
+const handlerMaxSubArray = async (source_code) => {
+  try {
+    const tests = [
+      { input: [-2, 1, -3, 4, -1, 2, 1, -5, 4], output: 6 },
+      { input: [1], output: 1 },
+      { input: [5, 4, -1, 7, 8], output: 23 },
+    ];
+
+    for (let i = 0; i < tests.length; i++) {
+      const result = await eval(`(${source_code})`)(tests[i].input);
+      if (result !== tests[i].output) {
+        throw new Error(
+          `Test case ${i} failed: expected ${tests[i].output}, but got ${result}`
+        );
+      }
+    }
+    return true;
+  } catch (error) {
+    console.log("Error from maxSubArrayHandler: ", error);
+    throw new Error(error);
+  }
+};
+
+
 module.exports = {
   handlerTwoSum,
   handlerReverseLinkedList,
@@ -357,6 +381,7 @@ module.exports = {
   handlerMaxDepth,
   handlerMaxProfit,
   handlerSubsets,
+  handlerMaxSubArray,
 };
 
 

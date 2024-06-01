@@ -4,11 +4,15 @@ document.addEventListener("DOMContentLoaded", async () => {
   const testCases = document.querySelectorAll(".test-case");
   const testCaseButtons = document.querySelectorAll(".test-case-btn");
   const problemIdElement = document.getElementById("problemId");
-  const problemId = problemIdElement ? problemIdElement.value : null;
+  const problemId = problemIdElement
+    ? parseInt(problemIdElement.value, 10)
+    : null;
   const thumbsUpIcon = document.querySelector(".thumbs-up-icon");
   const thumbsDownIcon = document.querySelector(".thumbs-down-icon");
+  const starIcon = document.querySelector(".star-icon");
   const thumbsUpToggle = document.getElementById("thumbs-up-toggle");
   const thumbsDownToggle = document.getElementById("thumbs-down-toggle");
+  const starToggle = document.getElementById("star-toggle");
   const commentToggle = document.getElementById("comment-toggle");
   const commentSection = document.getElementById("comment-section");
   const leftContainer = document.querySelector(".left-container");
@@ -22,11 +26,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   async function fetchProblems() {
     try {
-      const response = await fetch("/api/problems/mockProblems");
+      const response = await fetch("/api/problems");
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       mockProblems = await response.json();
+      console.log("Fetched problems:", mockProblems);
       if (problemId) {
         loadProblem(problemId);
       }
@@ -177,15 +182,12 @@ return (function(${functionName}) {
     }
   });
 
-
   function getFunctionName(problemId) {
-    const problem = mockProblems.find((p) => p.id === problemId);
-    if (!problem) {
-      throw new Error("Problem not found");
-    }
-    const match = problem.starter_function_name.match(/function (\w+)\(/);
-    return match ? match[1] : null;
+    const handlerName =
+      problemIdToHandlerMap[problemId] || problemIdToHandlerMap["default"];
+    return handlerName;
   }
+
 
   async function loadProblem(problemId) {
     const problem = mockProblems.find((p) => p.id === problemId);
@@ -204,7 +206,7 @@ return (function(${functionName}) {
           }
         }
       });
-      setActiveTestCase(0);
+      setActiveTestCase(0); // Ensure the first test case is shown by default
     }
     await fetchSavedCode(problemId); // Fetch saved code after loading the problem
   }
@@ -318,6 +320,17 @@ return (function(${functionName}) {
       const feedback = await response.json();
       likesCount.textContent = feedback.likes;
       dislikesCount.textContent = feedback.dislikes;
+
+      // Update star icon state
+      if (feedback.starred) {
+        starIcon.classList.remove("fa-regular");
+        starIcon.classList.add("fa-solid");
+        starIcon.classList.add("yellow");
+      } else {
+        starIcon.classList.remove("fa-solid");
+        starIcon.classList.remove("yellow");
+        starIcon.classList.add("fa-regular");
+      }
     } catch (error) {
       console.error("Error fetching feedback:", error);
     }
@@ -327,9 +340,12 @@ return (function(${functionName}) {
 
   // Handle like button click
   thumbsUpToggle.addEventListener("click", async () => {
+    console.log("Like button clicked");
+    const isActive = thumbsUpIcon.classList.contains("fa-solid");
+    console.log(isActive ? "Unliking problem" : "Liking problem");
     try {
       const response = await fetch(`/api/problems/${problemId}/like`, {
-        method: "POST",
+        method: isActive ? "DELETE" : "POST",
       });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -342,9 +358,12 @@ return (function(${functionName}) {
 
   // Handle dislike button click
   thumbsDownToggle.addEventListener("click", async () => {
+    console.log("Dislike button clicked");
+    const isActive = thumbsDownIcon.classList.contains("fa-solid");
+    console.log(isActive ? "Undisliking problem" : "Disliking problem");
     try {
       const response = await fetch(`/api/problems/${problemId}/dislike`, {
-        method: "POST",
+        method: isActive ? "DELETE" : "POST",
       });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -352,6 +371,36 @@ return (function(${functionName}) {
       await fetchFeedback();
     } catch (error) {
       console.error("Error disliking problem:", error);
+    }
+  });
+
+  // Handle star button click
+  starToggle.addEventListener("click", async () => {
+    console.log("Star button clicked");
+    const isActive = starIcon.classList.contains("fa-solid");
+    console.log(isActive ? "Unstarring problem" : "Starring problem");
+    try {
+      const response = await fetch(`/api/problems/${problemId}/star`, {
+        method: isActive ? "DELETE" : "POST",
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      console.log("Star response data:", data); // Log the response
+
+      // Update the star icon state based on the response
+      if (data.starred) {
+        starIcon.classList.remove("fa-regular");
+        starIcon.classList.add("fa-solid");
+        starIcon.classList.add("yellow");
+      } else {
+        starIcon.classList.remove("fa-solid");
+        starIcon.classList.remove("yellow");
+        starIcon.classList.add("fa-regular");
+      }
+    } catch (error) {
+      console.error("Error starring problem:", error);
     }
   });
 

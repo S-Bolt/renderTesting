@@ -1,6 +1,7 @@
 const router = require("express").Router();
-const { User, Problem, UserProblem } = require("../models");
+const { User, Problem, UserProblem, Comment } = require("../models");
 const withAuth = require("../public/utils/auth.js");
+
 // Route for displaying the homepage with problems
 router.get("/", async (req, res) => {
   try {
@@ -14,7 +15,7 @@ router.get("/", async (req, res) => {
     });
     const problems = problemData.map((problem) => {
       const plainProblem = problem.get({ plain: true });
-      plainProblem.solved = false; // Default to not solved, update based on user later
+      plainProblem.solved = false;
       plainProblem.difficultyColor =
         problem.difficulty === "Easy"
           ? "text-success"
@@ -23,8 +24,10 @@ router.get("/", async (req, res) => {
           : "text-danger";
       return plainProblem;
     });
+
     let user = null;
     let solvedProblemIds = [];
+
     if (req.session.logged_in) {
       const userData = await User.findByPk(req.session.user_id, {
         attributes: { exclude: ["password"] },
@@ -32,7 +35,7 @@ router.get("/", async (req, res) => {
       if (userData) {
         user = userData.get({ plain: true });
         const userProblems = await UserProblem.findAll({
-          where: { user_id: req.session.user_id, results: true }, // Fetch only solved problems
+          where: { user_id: req.session.user_id, results: true },
         });
         solvedProblemIds = userProblems.map(
           (userProblem) => userProblem.problem_id
@@ -44,21 +47,27 @@ router.get("/", async (req, res) => {
         });
       }
     }
+
     res.render("homepage", {
       username: user ? user.username : null,
       logged_in: req.session.logged_in,
       problems,
-      isDashboard: false, // Not a dashboard page
+      isDashboard: false,
     });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Failed to load homepage" });
   }
 });
+
 // Route for displaying a single problem by ID and render workspace
 router.get("/problems/:id", withAuth, async (req, res) => {
+  const id = parseInt(req.params.id, 10); // Ensure id is an integer
+  if (isNaN(id)) {
+    return res.status(400).json({ error: "Invalid problem ID" });
+  }
   try {
-    const problemData = await Problem.findByPk(req.params.id, {
+    const problemData = await Problem.findByPk(id, {
       include: [{ model: User, attributes: ["username"] }],
     });
     if (!problemData) {
@@ -75,64 +84,147 @@ router.get("/problems/:id", withAuth, async (req, res) => {
       logged_in: req.session.logged_in,
       bodyClass: "workspace-body",
       problems: allProblems.map((p) => p.get({ plain: true })),
-      isDashboard: false, // Not a dashboard page
-    });
-  } catch (err) {
-    res.status(500).json(err);
-  }
-});
-// Route for displaying the login page
-router.get("/login", (req, res) => {
-  if (req.session.logged_in) {
-    res.redirect("/homepage");
-    return;
-  }
-  res.render("login", { isDashboard: false }); // Not a dashboard page
-});
-// Route for displaying the sign-up page
-router.get("/signUp", (req, res) => {
-  if (req.session.logged_in) {
-    res.redirect("/");
-    return;
-  }
-  res.render("signUp", { isDashboard: false }); // Not a dashboard page
-});
-// Render the leaderboard view
-router.get("/leaderboard", withAuth, async (req, res) => {
-  try {
-    const users = await User.findAll({
-      attributes: ["username", "points"],
-      order: [["points", "DESC"]],
-      limit: 10, // Adjust the limit as needed
-    });
-    const leaderboardData = users.map((user) => user.get({ plain: true }));
-    res.render("leaderboard", {
-      leaderboard: leaderboardData,
-      logged_in: req.session.logged_in,
-      isDashboard: false, // Not a dashboard page
-    });
-  } catch (err) {
-    console.error("Error rendering leaderboard:", err);
-    res.status(500).json(err);
-  }
-});
-// Route for displaying the dashboard page
-router.get("/dashboard", withAuth, async (req, res) => {
-  try {
-    const userData = await User.findByPk(req.session.user_id, {
-      attributes: { exclude: ["password"] },
-    });
-    const user = userData.get({ plain: true });
-    res.render("dashboard", {
-      user,
-      logged_in: req.session.logged_in,
-      isDashboard: true, // Dashboard page
+      isDashboard: false,
     });
   } catch (err) {
     console.error(err);
     res.status(500).json(err);
   }
 });
+
+// Route for displaying the login page
+router.get("/login", (req, res) => {
+  if (req.session.logged_in) {
+    res.redirect("/homepage");
+    return;
+  }
+  res.render("login", { isDashboard: false });
+});
+
+// Route for displaying the sign-up page
+router.get("/signUp", (req, res) => {
+  if (req.session.logged_in) {
+    res.redirect("/");
+    return;
+  }
+  res.render("signUp", { isDashboard: false });
+});
+
+// Render the leaderboard view
+router.get("/leaderboard", withAuth, async (req, res) => {
+  try {
+    const users = await User.findAll({
+      attributes: ["username", "points"],
+      order: [["points", "DESC"]],
+      limit: 10,
+    });
+    const leaderboardData = users.map((user) => user.get({ plain: true }));
+    res.render("leaderboard", {
+      leaderboard: leaderboardData,
+      logged_in: req.session.logged_in,
+      isDashboard: false,
+    });
+  } catch (err) {
+    console.error("Error rendering leaderboard:", err);
+    res.status(500).json(err);
+  }
+});
+
+// Route for displaying the dashboard page
+router.get("/dashboard", withAuth, async (req, res) => {
+  try {
+    const userData = await User.findByPk(req.session.user_id, {
+      attributes: { exclude: ["password"] },
+    });
+    if (!userData) {
+      console.error("User not found for ID:", req.session.user_id);
+      return res.status(404).json({ error: "User not found" });
+    }
+    const user = userData.get({ plain: true });
+    res.render("dashboard", {
+      user,
+      logged_in: req.session.logged_in,
+      partial: "profile",
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json(err);
+  }
+});
+
+// Route to render new problem form
+router.get("/dashboard/new-problem", withAuth, async (req, res) => {
+  try {
+    res.render("dashboard", {
+      logged_in: req.session.logged_in,
+      partial: "create-problem",
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json(err);
+  }
+});
+
+// Route to fetch and render the user's problems
+router.get("/dashboard/problems", withAuth, async (req, res) => {
+  try {
+    const userProblems = await Problem.findAll({
+      where: { user_id: req.session.user_id },
+      include: [
+        {
+          model: User,
+          attributes: ["username"],
+        },
+      ],
+    });
+
+    const problems = userProblems.map((problem) =>
+      problem.get({ plain: true })
+    );
+
+    res.render("dashboard", {
+      logged_in: req.session.logged_in,
+      problems,
+      partial: "my-problems",
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json(err);
+  }
+});
+
+// Route to fetch and render the user's comments
+router.get("/dashboard/comments", withAuth, async (req, res) => {
+  try {
+    const userComments = await Comment.findAll({
+      where: { user_id: req.session.user_id },
+      include: [
+        {
+          model: User,
+          attributes: ["username"],
+        },
+        {
+          model: Problem,
+          attributes: ["title"],
+        },
+      ],
+    });
+
+    const comments = userComments.map((comment) =>
+      comment.get({ plain: true })
+    );
+
+    res.render("dashboard", {
+      logged_in: req.session.logged_in,
+      comments,
+      partial: "my-comments",
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json(err);
+  }
+});
+
 // Route for displaying the solutions page
 router.get("/solutions", withAuth, async (req, res) => {
   try {
@@ -145,6 +237,7 @@ router.get("/solutions", withAuth, async (req, res) => {
     res.status(500).json(err);
   }
 });
+
 // Route for displaying all problems for a specific user
 router.get("/problems", withAuth, async (req, res) => {
   try {
@@ -161,7 +254,9 @@ router.get("/problems", withAuth, async (req, res) => {
         user_id: req.session.user_id,
       },
     });
-    const solvedProblems = userProblems.map((userProblem) => userProblem.problem_id);
+    const solvedProblems = userProblems.map(
+      (userProblem) => userProblem.problem_id
+    );
     const problemsData = problems.map((problem) => {
       const plainProblem = problem.get({ plain: true });
       plainProblem.solved = solvedProblems.includes(problem.id);
@@ -183,13 +278,5 @@ router.get("/problems", withAuth, async (req, res) => {
     res.status(500).json(err);
   }
 });
+
 module.exports = router;
-
-
-
-
-
-
-
-
-

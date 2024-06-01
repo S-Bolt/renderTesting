@@ -19,11 +19,11 @@ router.post("/submit-code", async (req, res) => {
   console.log("Session user_id:", req.session.user_id);
 
   try {
-    const capitalizedProblemId = capitalize(problemId);
-    console.log("Capitalized Problem ID:", capitalizedProblemId);
-    const handlerFunction = problemHandlers[`handler${capitalizedProblemId}`];
+    const handlerFunctionName = capitalize(problemId);
+    console.log("Handler Function Name:", handlerFunctionName);
+    const handlerFunction = problemHandlers[handlerFunctionName];
     if (!handlerFunction) {
-      console.error("Invalid problem ID:", capitalizedProblemId);
+      console.error("Invalid problem ID:", handlerFunctionName);
       return res.status(400).json({ error: "Invalid problem ID" });
     }
 

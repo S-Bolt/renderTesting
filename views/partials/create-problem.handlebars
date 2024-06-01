@@ -1,0 +1,51 @@
+<!-- views/partials/create-problem.handlebars -->
+<section class="section new-problem">
+  <h2 class="text-center text-3xl my-7 font-semibold">Create a New Problem</h2>
+  <form id="create-problem-form">
+    <div class="input-box">
+      <div class="question">
+        <input type="text" id="title" name="title" placeholder="Title" autocomplete="off" required>
+      </div>
+      <div class="question">
+        <select id="difficulty" name="difficulty" required>
+          <option value="" disabled selected>Select Difficulty</option>
+          <option value="Easy">Easy</option>
+          <option value="Medium">Medium</option>
+          <option value="Hard">Hard</option>
+        </select>
+      </div>
+      <div class="question">
+        <input type="text" id="category" name="category" placeholder="Category" autocomplete="off" required>
+      </div>
+      <div class="question">
+        <input type="number" id="order" name="order" placeholder="Order" min="1" required>
+      </div>
+      <div class="question">
+        <input type="text" id="video_id" name="video_id" placeholder="Video ID (optional)" autocomplete="off">
+      </div>
+      <div class="question">
+        <textarea id="problem-statement" name="problem_statement" rows="5" placeholder="Problem Statement" required></textarea>
+      </div>
+      <div class="question">
+        <textarea id="starter-code" name="starter_code" rows="5" placeholder="Starter Code (optional)"></textarea>
+      </div>
+      <div class="question">
+        <textarea id="examples" name="examples" rows="5" placeholder="Examples (in JSON format)" required></textarea>
+      </div>
+      <div class="question">
+        <textarea id="constraints" name="constraints" rows="3" placeholder="Constraints" required></textarea>
+      </div>
+      <div class="question">
+        <textarea id="handler-function" name="handler_function" rows="5" placeholder="Handler Function" required></textarea>
+      </div>
+      <div class="question">
+        <input type="text" id="starter_function_name" name="starter_function_name" placeholder="Starter Function Name" autocomplete="off" required>
+      </div>
+    </div>
+    <div class="btn-box btns">
+      <button type="submit" id="submit-button" class="submit-button">Create Problem</button>
+    </div>
+  </form>
+</section>
+
+<script type="module" src="/js/create-problem.js"></script>

@@ -5,6 +5,7 @@
       <button class="tablink" id="description-tab" onclick="openTab(event, 'description')">Description</button>
       <button class="tablink" id="solution-tab" onclick="openTab(event, 'solution')">Solution</button>
     </div>
+
     <!-- Tab Content -->
     <div id="description" class="tabcontent">
       <div class="problem-description">
@@ -24,10 +25,12 @@
             {{/if}}
           </div>
         {{/each}}
+
         <h2>Constraints</h2>
         <ul>{{{problem.constraints}}}</ul>
       </div>
     </div>
+
     <div id="solution" class="tabcontent">
       <div class="problem-solution">
         <h1>Solution</h1>
@@ -56,6 +59,10 @@
           <div class="state-layer"></div>
           <span id="dislikes-count">0</span> <!-- Dislikes counter -->
         </button>
+        <button class="feedback-btn" id="star-toggle" aria-label="Star" data-ripple>
+          <i class="fa-regular fa-star star-icon" aria-hidden="true"></i>
+          <div class="state-layer"></div>
+        </button>
       </div>
       <div class="comments-container">
         <button class="feedback-btn" id="comment-toggle" aria-label="Comment" data-ripple>
@@ -70,8 +77,8 @@
       <h2>Code</h2>
       <textarea id="codeEditor" rows="10" cols="50">{{problem.starter_code}}</textarea>
       <div class="editor-buttons">
-        <button id="runCode">Run</button>
-        <button id="submitCode">Submit</button>
+        <button id="runCode"><i class="fa fa-play"></i> Run</button>
+        <button id="submitCode"><i class="fa fa-check"></i> Submit</button>
       </div>
     </div>
     <div class="test-cases">
@@ -83,7 +90,7 @@
       </div>
       {{#each problem.examples}}
         <div class="test-case" data-id="{{@index}}">
-          <h3>Case {{@index}}</h3>
+          <h3>Case {{inc @index}}</h3> <!-- Use helper to increment index by 1 -->
           <p><strong>Input:</strong> {{{this.inputText}}}</p>
           <p><strong>Output:</strong> <span class="output">{{this.outputText}}</span></p>
           <p><strong>Result:</strong> <span class="result"></span></p>
@@ -99,6 +106,7 @@
     </div>
   </div>
 </div>
+
 <input type="hidden" id="problemId" value="{{problem.id}}">
 <script type="module" src="/js/workspace.js"></script>
 <script>
@@ -115,6 +123,7 @@
     document.getElementById(tabName).style.display = "block";
     evt.currentTarget.className += " active";
   }
+
   // Open the default tab
   document.getElementById("description-tab").click();
-</script> 
+</script>

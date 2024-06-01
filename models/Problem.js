@@ -6,9 +6,10 @@ class Problem extends Model {}
 Problem.init(
   {
     id: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
+      autoIncrement: true,
     },
     title: {
       type: DataTypes.STRING,
@@ -45,42 +46,34 @@ Problem.init(
     order: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      defaultValue: 0,
     },
     likes: {
       type: DataTypes.INTEGER,
-      allowNull: false,
       defaultValue: 0,
     },
     dislikes: {
       type: DataTypes.INTEGER,
-      allowNull: false,
       defaultValue: 0,
     },
     user_id: {
       type: DataTypes.INTEGER,
-      allowNull: true,
       references: {
         model: "user",
         key: "id",
       },
-      onDelete: "CASCADE",
     },
-    created_at: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: DataTypes.NOW,
+    video_id: {
+      type: DataTypes.STRING,
+      allowNull: true,
     },
-    updated_at: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: DataTypes.NOW,
+    starter_function_name: {
+      type: DataTypes.STRING,
+      allowNull: false, 
     },
   },
   {
     sequelize,
-    timestamps: false,
-    freezeTableName: true,
+    timestamps: true,
     underscored: true,
     modelName: "problem",
   }
