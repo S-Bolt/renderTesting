@@ -1,28 +1,39 @@
 <div class="workspace-container">
   <div class="left-container">
-    <div class="problem-description">
-      <h1>{{problem.title}}</h1>
-      <div class="difficulty {{difficultyClass problem.difficulty}}">
-        {{problem.difficulty}}
-      </div>
-      <div class="problem-statement">{{{problem.problem_statement}}}</div>
-
-      <h2>Examples</h2>
-      {{#each problem.examples}}
-        <div class="example">
-          <h3>Example {{@index}}</h3>
-          <p><strong>Input:</strong> {{{this.inputText}}}</p>
-          <p><strong>Output:</strong> {{{this.outputText}}}</p>
-          {{#if this.explanation}}
-            <p><strong>Explanation:</strong> {{{this.explanation}}}</p>
-          {{/if}}
-        </div>
-      {{/each}}
-
-      <h2>Constraints</h2>
-      <ul>{{{problem.constraints}}}</ul>
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tablink" id="description-tab" onclick="openTab(event, 'description')">Description</button>
+      <button class="tablink" id="solution-tab" onclick="openTab(event, 'solution')">Solution</button>
     </div>
-
+    <!-- Tab Content -->
+    <div id="description" class="tabcontent">
+      <div class="problem-description">
+        <h1>{{problem.title}}</h1>
+        <div class="difficulty {{difficultyClass problem.difficulty}}">
+          {{problem.difficulty}}
+        </div>
+        <div class="problem-statement">{{{problem.problem_statement}}}</div>
+        <h2>Examples</h2>
+        {{#each problem.examples}}
+          <div class="example">
+            <h3>Example {{@index}}</h3>
+            <p><strong>Input:</strong> {{{this.inputText}}}</p>
+            <p><strong>Output:</strong> {{{this.outputText}}}</p>
+            {{#if this.explanation}}
+              <p><strong>Explanation:</strong> {{{this.explanation}}}</p>
+            {{/if}}
+          </div>
+        {{/each}}
+        <h2>Constraints</h2>
+        <ul>{{{problem.constraints}}}</ul>
+      </div>
+    </div>
+    <div id="solution" class="tabcontent">
+      <div class="problem-solution">
+        <h1>Solution</h1>
+        <pre><code>{{{problem.solution}}}</code></pre>
+      </div>
+    </div>
     <!-- Comment Section -->
     <div class="comment-section hidden" id="comment-section">
       <h2>Leave a Comment</h2>
@@ -32,7 +43,6 @@
       </form>
       <div id="comments-list"></div>
     </div>
-
     <!-- Feedback Section -->
     <div class="feedback-section">
       <div class="likes-container">
@@ -40,13 +50,11 @@
           <i class="fa-regular fa-thumbs-up thumbs-up-icon" aria-hidden="true"></i>
           <div class="state-layer"></div>
           <span id="likes-count">0</span> <!-- Likes counter -->
-
         </button>
         <button class="feedback-btn" id="thumbs-down-toggle" aria-label="Thumbs down" data-ripple>
           <i class="fa-regular fa-thumbs-down thumbs-down-icon" aria-hidden="true"></i>
           <div class="state-layer"></div>
           <span id="dislikes-count">0</span> <!-- Dislikes counter -->
-
         </button>
       </div>
       <div class="comments-container">
@@ -57,7 +65,6 @@
       </div>
     </div>
   </div>
-
   <div class="right-container">
     <div class="code-editor">
       <h2>Code</h2>
@@ -84,7 +91,6 @@
       {{/each}}
     </div>
   </div>
-
   <!-- Modal -->
   <div id="modal" class="modal">
     <div class="modal-content">
@@ -93,7 +99,22 @@
     </div>
   </div>
 </div>
-
 <input type="hidden" id="problemId" value="{{problem.id}}">
-
 <script type="module" src="/js/workspace.js"></script>
+<script>
+  function openTab(evt, tabName) {
+    var i, tabcontent, tablinks;
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+      tabcontent[i].style.display = "none";
+    }
+    tablinks = document.getElementsByClassName("tablink");
+    for (i = 0; i < tablinks.length; i++) {
+      tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+    document.getElementById(tabName).style.display = "block";
+    evt.currentTarget.className += " active";
+  }
+  // Open the default tab
+  document.getElementById("description-tab").click();
+</script> 
