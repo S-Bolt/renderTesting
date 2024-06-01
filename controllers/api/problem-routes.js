@@ -4,7 +4,8 @@ const withAuth = require("../../public/utils/auth.js");
 const { getProblems, getProblemById, solveProblem } = require("../problemController");
 const mockProblems = require("../../seeds/mockProblems.js");
 
-router.get("/mockProblems", (req, res) => {
+
+router.get("/mockProblems", (_req, res) => {
   res.json(mockProblems);
 });
 
@@ -132,4 +133,7 @@ router.get("/:id/feedback", async (req, res) => {
 router.post("/:id/solve", withAuth, solveProblem);
 
 
+
 module.exports = router;
+
+

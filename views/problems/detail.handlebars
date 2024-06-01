@@ -23,3 +23,12 @@
 <h2>Likes and Dislikes</h2>
 <p>Likes: {{likes}}</p>
 <p>Dislikes: {{dislikes}}</p>
+
+{{#if currentUser}}
+  <button id="like">Like</button>
+  <button id="dislike">Dislike</button>
+{{/if}}
+
+<script src="/js/problemHandlers.js"></script>
+<script src="/js/problemsTable.js"></script>
+
