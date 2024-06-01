@@ -1,0 +1,104 @@
+<!-- views/partials/my-problems.handlebars -->
+<section class="section my-problems">
+  <h2 class="text-center text-3xl my-7 font-semibold">My Problems</h2>
+  <div class="problems-container">
+    <table class="text-sm text-left text-gray-500 dark:text-gray-400 sm:w-7/12 w-full max-w-[1200px] mx-auto problems-table">
+      <thead class="text-xs text-gray-700 uppercase dark:text-gray-400 border-b table-head">
+        <tr class="table-row">
+          <th scope="col" class="px-6 py-3 w-0 font-medium">Title</th>
+          <th scope="col" class="px-6 py-3 w-0 font-medium">Difficulty</th>
+          <th scope="col" class="px-6 py-3 w-0 font-medium">Category</th>
+          <th scope="col" class="px-6 py-3 w-0 font-medium">Date</th>
+          <th scope="col" class="px-6 py-3 w-0 font-medium">Solution</th>
+        </tr>
+      </thead>
+      <tbody id="problems-table-body" class="dark:text-white text-black">
+        {{#each problems}}
+        <tr class="problems-table-row" data-problem-id="{{this.id}}">
+          <td class="px-6 py-4 title-cell">
+            <a href="#" class="hover:text-blue-600 cursor-pointer problem-title" data-problem-id="{{id}}">{{title}}</a>
+          </td>
+          <td class="px-6 py-4 difficulty-cell {{difficulty}}">
+            {{difficulty}}
+          </td>
+          <td class="px-6 py-4">{{category}}</td>
+          <td class="px-6 py-4">{{createdAt}}</td>
+          <td class="px-6 py-4 solution-cell">
+            {{#if video_id}}
+            <i class="fab fa-youtube text-danger youtube-icon" data-video-id="{{video_id}}"></i>
+            {{else}}
+            <p class="text-gray-400">Coming soon</p>
+            {{/if}}
+          </td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Edit Problem Modal -->
+  <div id="edit-problem-modal" class="edit-modal-container">
+    <h2 class="text-center text-3xl my-7 font-semibold">Problem Details</h2>
+    <div class="edit-modal">
+      <span class="close-modal-btn">&times;</span>
+      <form id="edit-problem-form">
+        <div class="input-box">
+          <div class="question">
+            <input type="text" id="edit-title" name="title" placeholder="Title" autocomplete="off" required>
+          </div>
+          <div class="question">
+            <select id="edit-difficulty" name="difficulty" required>
+              <option value="" disabled>Select Difficulty</option>
+              <option value="Easy">Easy</option>
+              <option value="Medium">Medium</option>
+              <option value="Hard">Hard</option>
+            </select>
+          </div>
+          <div class="question">
+            <input type="text" id="edit-category" name="category" placeholder="Category" autocomplete="off" required>
+          </div>
+          <div class="question">
+            <input type="number" id="edit-order" name="order" placeholder="Order" min="1" required>
+          </div>
+          <div class="question">
+            <input type="text" id="edit-video_id" name="video_id" placeholder="Video ID (optional)" autocomplete="off">
+          </div>
+          <div class="question">
+            <textarea id="edit-problem-statement" name="problem_statement" rows="5" placeholder="Problem Statement" required></textarea>
+          </div>
+          <div class="question">
+            <textarea id="edit-starter-code" name="starter_code" rows="5" placeholder="Starter Code (optional)"></textarea>
+          </div>
+          <div class="question">
+            <textarea id="edit-examples" name="examples" rows="5" placeholder="Examples (in JSON format)" required></textarea>
+          </div>
+          <div class="question">
+            <textarea id="edit-constraints" name="constraints" rows="3" placeholder="Constraints" required></textarea>
+          </div>
+          <div class="question">
+            <textarea id="edit-handler-function" name="handler_function" rows="5" placeholder="Handler Function" required></textarea>
+          </div>
+          <div class="question">
+            <input type="text" id="edit-starter_function_name" name="starter_function_name" placeholder="Starter Function Name" autocomplete="off" required>
+          </div>
+        </div>
+        <div class="edit-btns">
+          <button type="submit" id="edit-submit-button" class="btn-primary submit-button">Save</button>
+          <button type="button" id="delete-problem-button" class="btn-primary delete-button">Delete</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Confirm Delete Modal -->
+  <div id="confirm-delete-modal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal-btn">&times;</span>
+      <p>Are you sure you want to delete this problem?</p>
+      <button id="confirm-delete-button" class="delete-button">Yes, delete it</button>
+      <button id="cancel-delete-button" class="cancel-button">Cancel</button>
+    </div>
+  </div>
+
+  <script src="/js/myProblems.js"></script>
+</section>
