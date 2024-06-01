@@ -37,11 +37,12 @@
                     </td>
                     <td class="px-6 py-4">{{category}}</td>
                     <td class="px-6 py-4 solution-cell">
-                        {{#if videoId}}
+                          {{#if videoId}}
                         <i class="fas fa-youtube text-danger youtube-icon" data-video-id="{{videoId}}"></i>
-                        {{else}}
-                        <p class="text-gray-400">Coming soon</p>
+                        {{else}}    
+                <p class="text-gray-400">Coming soon</p>
                         {{/if}}
+                      
                     </td>
                 </tr>
                 {{/each}}

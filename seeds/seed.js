@@ -1,6 +1,7 @@
 const sequelize = require("../config/connection");
 const { Problem, User } = require("../models");
 const problems = require("./mockProblems");
+const soultions = require("./mockSolution");
 
 const seedDatabase = async () => {
   await sequelize.sync({ force: true });

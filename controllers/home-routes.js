@@ -1,7 +1,6 @@
 const router = require("express").Router();
 const { User, Problem, UserProblem } = require("../models");
 const withAuth = require("../public/utils/auth.js");
-const { Op } = require("sequelize");
 
 // Route for displaying the homepage with problems
 router.get("/", async (req, res) => {
@@ -156,6 +155,17 @@ router.get("/dashboard", withAuth, async (req, res) => {
     res.status(500).json(err);
   }
 });
-
+///Route for displaying the solutions page
+router.get("/solutions", withAuth, async (req, res) => {
+  try {
+    res.render("solutions", {
+      logged_in: req.session.logged_in,
+      isDashboard: false,
+    })
+  } catch (err) {
+    console.error("Error rendering Discussion", err);
+    res.status(500).json(err);
+  }
+});
 
 module.exports = router;
