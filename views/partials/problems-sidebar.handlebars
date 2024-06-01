@@ -1,0 +1,15 @@
+<div id="problems-sidebar" class="problems-sidebar hidden" data-ripple data-nav-toggler>
+  <div class="sidebar-header">
+    <h2>Problems List</h2>
+    <button id="close-sidebar" aria-label="Close sidebar">
+      <span class="material-symbols-outlined">close</span>
+    </button>
+  </div>
+  <div class="sidebar-content">
+    <ul id="problems-list">
+      {{#each problems}}
+        <li><a href="/problems/{{id}}" class="sidebar-link">{{title}} <span class="difficulty {{difficulty}}">{{difficulty}}</span></a></li>
+      {{/each}}
+    </ul>
+  </div>
+</div>

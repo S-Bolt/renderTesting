@@ -1,0 +1,46 @@
+<!-- views/partials/profile.handlebars -->
+<h1 class="my-7 text-center font-semibold text-3xl">Profile</h1>
+<form id="profile-form" class="flex flex-col gap-4">
+    <div class="input-box">
+        {{#if user.profilePicture}}
+          <img src="{{user.profilePicture}}" alt="Profile Picture" class="profile-picture">
+        {{/if}}
+        <input type="file" id="file-picker" accept="image/*" hidden>
+        <div class="file-upload-group">
+            <div class="file-input-wrapper">
+                <input type="file" id="blog-image" name="blog-image" accept="image/*">
+                <div id="upload-progress" class="hidden">
+                    <div class="w-16 h-16">
+                        <div id="progress-bar"></div>
+                        <div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+                    </div>
+                    <div id="upload-error" class="text-red-500"></div>
+                </div>
+                <button type="button" id="upload-button" class="btn btn-primary upload-btn">Upload Image</button>
+            </div>
+            <input type="hidden" id="blog-image-url" name="image-url">
+        </div>
+        
+        <div id="image-upload-error" class="text-red-500"></div>
+        <input type="text" id="username" placeholder="Username" value="{{user.username}}" class="form-control">
+        <input type="email" id="email" placeholder="Email" value="{{user.email}}" class="form-control">
+        <input type="password" id="password" placeholder="Password" class="form-control">
+        <button type="submit" class="btn btn-primary" id="submit-button">Update</button>
+        <div id="admin-button-container"></div>
+    </div>
+</form>
+<div class="text-red-500 flex justify-between mt-5">
+    <span onclick="showModal()" class="cursor-pointer">Delete Account</span>
+    <span onclick="signOut()" class="cursor-pointer">Sign Out</span>
+</div>
+<div id="update-success" class="alert alert-success mt-5" style="display: none;"></div>
+<div id="update-error" class="alert alert-danger mt-5" style="display: none;"></div>
+<div id="error" class="alert alert-danger mt-5" style="display: none;"></div>
+<div id="modal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <p>Are you sure you want to delete your account?</p>
+        <button onclick="deleteAccount()" class="btn btn-danger">Yes, I'm sure</button>
+        <button onclick="closeModal()" class="btn btn-secondary">No, cancel</button>
+    </div>
+</div>
