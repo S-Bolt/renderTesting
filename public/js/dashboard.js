@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     try {
-      const response = await fetch("/api/user/update", {
+      const response = await fetch("/api/users/update", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -87,7 +87,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   window.deleteAccount = async function () {
     try {
-      const response = await fetch("/api/user/delete", {
+      const response = await fetch("/api/users/delete", {
         method: "DELETE",
       });
 
@@ -104,7 +104,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   window.signOut = async function () {
     try {
-      const response = await fetch("/api/user/signout", {
+      const response = await fetch("/api/users/signout", {
         method: "POST",
       });
 

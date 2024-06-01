@@ -4,6 +4,7 @@ const { User } = require("../../models");
 const multer = require("multer");
 const path = require("path");
 const withAuth = require("../../public/utils/auth.js");
+const bcrypt = require('bcrypt');
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -127,7 +128,9 @@ router.put("/update", withAuth, async (req, res) => {
 
     const updateData = { username, email, profilePicture };
     if (password) {
-      updateData.password = password;
+      //hashing new password to store in DB
+      const salt = await bcrypt.genSalt(10);
+      updateData.password = await bcrypt.hash(password, salt);
     }
 
     await User.update(updateData, {
