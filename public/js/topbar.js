@@ -33,6 +33,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Toggle theme
   if (themeToggle) {
     themeToggle.addEventListener("click", () => {
+      console.log("Theme toggled");
       currentTheme = currentTheme === "dark" ? "light" : "dark";
       setTheme(currentTheme);
     });
@@ -132,7 +133,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       problemsListContainer.innerHTML = problems
         .map(
           (problem) =>
-            `<li><a href="/problems/${problem.id}" class="problem-link">${problem.title} - <span class="difficulty ${problem.difficulty}">${problem.difficulty}</span></a></li>`
+            `<li><a href="/problems/${problem.id}" class="sidebar-link">${problem.title} <span class="difficulty ${problem.difficulty}">${problem.difficulty}</span></a></li>`
         )
         .join("");
     }
@@ -169,18 +170,31 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // Toggle sidebar
   if (problemsListToggle) {
-    problemsListToggle.addEventListener("click", () => {
+    problemsListToggle.addEventListener("click", (event) => {
       problemsSidebar.classList.toggle("hidden");
       problemsSidebar.classList.add("active");
+      // Prevent the event from propagating to other elements
+      event.stopPropagation();
     });
   }
 
   // Close sidebar
   if (closeSidebarButton) {
-    closeSidebarButton.addEventListener("click", () => {
+    closeSidebarButton.addEventListener("click", (event) => {
       problemsSidebar.classList.add("hidden");
+      // Prevent the event from propagating to other elements
+      event.stopPropagation();
+    });
+  }
+
+  // Prevent clicking inside the problems sidebar from closing it or triggering other sidebars
+  if (problemsSidebar) {
+    problemsSidebar.addEventListener("click", (event) => {
+      // Prevent the event from propagating to other elements
+      event.stopPropagation();
     });
   }
 
   await fetchProblems();
 });
+

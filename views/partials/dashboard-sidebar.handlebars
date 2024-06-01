@@ -1,3 +1,4 @@
+<!-- views/partials/dashboard-sidebar.handlebars -->
 <nav class="navigation" data-navigation data-sidebar="dashboard">
   <div class="navigation-header">
     <button class="icon-btn" aria-label="Close menu" data-ripple data-nav-toggler>
@@ -7,7 +8,13 @@
     <a href="/" class="logo">Code Hunt</a>
   </div>
   <ul class="drawer-list">
-    
+    <li class="drawer-item">
+      <a href="/dashboard" class="drawer-link" data-drawer-link>
+        <span class="material-symbols-outlined leading-icon" aria-hidden="true">account_circle</span>
+        <span class="label-large">Profile</span>
+        <div class="state-layer"></div>
+      </a>
+    </li>
     <li class="drawer-item">
       <a href="/dashboard/problems" class="drawer-link" data-drawer-link>
         <span class="material-symbols-outlined leading-icon" aria-hidden="true">code</span>
