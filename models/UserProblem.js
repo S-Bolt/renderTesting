@@ -1,4 +1,3 @@
-// models/UserProblem.js
 const { Model, DataTypes } = require("sequelize");
 const sequelize = require("../config/connection");
 
@@ -20,7 +19,7 @@ UserProblem.init(
       },
     },
     problem_id: {
-      type: DataTypes.STRING, // Update to STRING to match Problem's id type
+      type: DataTypes.INTEGER, // Update to INTEGER to match Problem's id type
       allowNull: false,
       references: {
         model: "problem",

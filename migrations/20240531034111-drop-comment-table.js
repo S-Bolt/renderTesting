@@ -1,7 +1,12 @@
-// migrations/YYYYMMDDHHMMSS-create-user-problem-table.js
+"use strict";
+
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable("user_problem", {
+    await queryInterface.dropTable("comment");
+  },
+
+  down: async (queryInterface, Sequelize) => {
+    await queryInterface.createTable("comment", {
       id: {
         type: Sequelize.INTEGER,
         allowNull: false,
@@ -10,11 +15,13 @@ module.exports = {
       },
       user_id: {
         type: Sequelize.INTEGER,
+        allowNull: false,
         references: {
           model: "user",
           key: "id",
         },
         onDelete: "CASCADE",
+        onUpdate: "CASCADE",
       },
       problem_id: {
         type: Sequelize.STRING,
@@ -24,8 +31,9 @@ module.exports = {
           key: "id",
         },
         onDelete: "CASCADE",
+        onUpdate: "CASCADE",
       },
-      code: {
+      content: {
         type: Sequelize.TEXT,
         allowNull: false,
       },
@@ -34,15 +42,6 @@ module.exports = {
         allowNull: false,
         defaultValue: Sequelize.fn("now"),
       },
-      updated_at: {
-        type: Sequelize.DATE,
-        allowNull: false,
-        defaultValue: Sequelize.fn("now"),
-      },
     });
-  },
-
-  down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable("user_problem");
   },
 };
