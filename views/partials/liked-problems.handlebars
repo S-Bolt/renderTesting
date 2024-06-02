@@ -1,0 +1,28 @@
+<section class="section liked-problems">
+  <h2 class="text-center text-3xl my-7 font-semibold">Liked Problems</h2>
+  <div class="problem-card-container">
+    {{#if problems.length}}
+      <ul class="problem-list">
+        {{#each problems}}
+          <li class="problem-card">
+            <div class="card-content">
+              <h3 class="card-title">{{this.title}}</h3>
+              <p>Created by: {{this.user.username}}</p>
+              <p>Difficulty: <span class="{{this.difficultyColor}}">{{this.difficulty}}</span></p>
+              <div class="profile-card">
+                <figure class="profile-banner img-holder">
+                  <img src="./assets/images/author-placeholder.png" width="32" height="32" loading="lazy" alt="User Avatar">
+                </figure>
+                <div>
+                  <h3>View Problem: <a href="/problems/{{this.id}}">{{this.title}}</a></h3>
+                </div>
+              </div>
+            </div>
+          </li>
+        {{/each}}
+      </ul>
+    {{else}}
+      <p>No liked problems yet.</p>
+    {{/if}}
+  </div>
+</section>

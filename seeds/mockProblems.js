@@ -69,32 +69,8 @@ const mockProblems = [
     ],
     constraints: `<li class='mt-2'>The number of nodes in the list is the range <code>[0, 5000]</code>.</li>
     <li class='mt-2'><code>-5000 <= Node.val <= 5000</code></li>`,
-    starter_code: `
-    class LinkedList {
-        value;
-        next;
+    starter_code: "class LinkedList {\n value;\n next;\n\n constructor(value) {\n this.value = value;\n this.next = null;\n }\n\n reverse() {\n let current = this;\n let prev = null;\n while (current !== null) {\n const next = current.next;\n current.next = prev;\n prev = current;\n current = next;\n }\n return prev;\n }\n}\n\nfunction reverseLinkedList(head) {\n // Write your code here\n};",
 
-        constructor(value) {
-            this.value = value;
-            this.next = null;
-        }
-
-        reverse() {
-            let current = this;
-            let prev = null;
-            while (current !== null) {
-                const next = current.next;
-                current.next = prev;
-                prev = current;
-                current = next;
-            }
-            return prev;
-        }
-    }
-
-    function reverseLinkedList(head) {
-      // Write your code here
-    };`,
     handler_function: `reverseLinkedList`,
     starter_function_name: "function reverseLinkedList(",
   },

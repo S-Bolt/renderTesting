@@ -165,7 +165,7 @@ router.get("/dashboard/new-problem", withAuth, async (req, res) => {
   }
 });
 
-// Route to fetch and render the user's problems
+// Route to fetch and render the user's created problems
 router.get("/dashboard/problems", withAuth, async (req, res) => {
   try {
     const userProblems = await Problem.findAll({
@@ -225,18 +225,90 @@ router.get("/dashboard/comments", withAuth, async (req, res) => {
   }
 });
 
-// Route for displaying the solutions page
-router.get("/solutions", withAuth, async (req, res) => {
+// Route to fetch and render user's liked problems
+router.get("/dashboard/liked-problems", withAuth, async (req, res) => {
   try {
-    res.render("solutions", {
+    const likedProblemsData = await UserProblem.findAll({
+      where: { user_id: req.session.user_id, liked: true },
+      include: [
+        {
+          model: Problem,
+          include: [{ model: User, attributes: ["username"] }],
+        },
+      ],
+    });
+
+    const likedProblems = likedProblemsData.map((userProblem) =>
+      userProblem.problem.get({ plain: true })
+    );
+
+    res.render("dashboard", {
       logged_in: req.session.logged_in,
-      isDashboard: false,
+      problems: likedProblems,
+      partial: "liked-problems",
     });
   } catch (err) {
-    console.error("Error rendering Discussion", err);
+    console.error(err);
     res.status(500).json(err);
   }
 });
+
+// Route to fetch and render user's disliked problems
+router.get("/dashboard/disliked-problems", withAuth, async (req, res) => {
+  try {
+    const dislikedProblemsData = await UserProblem.findAll({
+      where: { user_id: req.session.user_id, disliked: true },
+      include: [
+        {
+          model: Problem,
+          include: [{ model: User, attributes: ["username"] }],
+        },
+      ],
+    });
+
+    const dislikedProblems = dislikedProblemsData.map((userProblem) =>
+      userProblem.problem.get({ plain: true })
+    );
+
+    res.render("dashboard", {
+      logged_in: req.session.logged_in,
+      problems: dislikedProblems,
+      partial: "disliked-problems",
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json(err);
+  }
+});
+
+// Route to fetch and render user's starred problems
+router.get("/dashboard/starred-problems", withAuth, async (req, res) => {
+  try {
+    const starredProblemsData = await UserProblem.findAll({
+      where: { user_id: req.session.user_id, starred: true },
+      include: [
+        {
+          model: Problem,
+          include: [{ model: User, attributes: ["username"] }],
+        },
+      ],
+    });
+
+    const starredProblems = starredProblemsData.map((userProblem) =>
+      userProblem.problem.get({ plain: true })
+    );
+
+    res.render("dashboard", {
+      logged_in: req.session.logged_in,
+      problems: starredProblems,
+      partial: "starred-problems",
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json(err);
+  }
+});
+
 
 // Route for displaying all problems for a specific user
 router.get("/problems", withAuth, async (req, res) => {
