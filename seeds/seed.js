@@ -1,16 +1,15 @@
 const sequelize = require("../config/connection");
 const { Problem, User } = require("../models");
 const problems = require("./mockProblems");
-const soultions = require("./mockSolution");
+const solutions = require("./mockSolution");
 
 const seedDatabase = async () => {
-  // Sync the database without dropping existing tables
-  await sequelize.sync();
+  await sequelize.sync({ force: true });
 
-  // Create a default user
+  // Create a default user with a unique username
   const defaultUser = await User.create({
-    username: "testuser",
-    email: "testuser@example.com",
+    username: `testuser${Date.now()}`,
+    email: `testuser${Date.now()}@example.com`,
     password: "password123",
   });
 
