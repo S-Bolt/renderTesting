@@ -13,14 +13,24 @@ const {
   unDislikeProblem,
   unStarProblem,
 } = require("../problemController");
-const mockProblems = require("../../seeds/mockProblems.js");
+const { problemIdToHandlerMap } = require("../../public/utils/helpers");
 
-router.get("/mockProblems", (_req, res) => {
-  res.json(mockProblems);
+// Fetch problemIdToHandlerMap
+router.get("/problem-handlers", (req, res) => {
+  try {
+    console.log("Handler map:", problemIdToHandlerMap); // Log the handler map
+    if (!problemIdToHandlerMap) {
+      throw new Error("Handler map is undefined or null");
+    }
+    res.json(problemIdToHandlerMap);
+  } catch (error) {
+    console.error("Error fetching handler map:", error);
+    res.status(500).json({ error: "Failed to fetch handler map" });
+  }
 });
 
 router.get("/", getProblems);
-router.get("/:id", withAuth, getProblemById);
+router.get("/:id", getProblemById);
 router.get("/:id/feedback", withAuth, getFeedback);
 
 // Create a new problem
@@ -70,6 +80,9 @@ router.post("/", withAuth, async (req, res) => {
       starter_function_name,
       user_id: req.session.user_id,
     });
+
+    // Update the handler map
+    problemIdToHandlerMap[newProblem.id] = handler_function;
 
     res.status(200).json(newProblem);
   } catch (err) {

@@ -1,27 +1,26 @@
+// public/utils/helpers.js
 const Handlebars = require("handlebars");
 
 const problemIdToHandlerMap = {
-  1: "handlerTwoSum",
-  2: "handlerReverseLinkedList",
-  3: "handlerJumpGame",
-  4: "handlerValidParentheses",
-  5: "handlerSearchMatrix",
-  6: "handlerMaxArea",
-  8: "handlerMergeIntervals",
-  9: "handlerMaxDepth",
-  7: "handlerMaxProfit",
-  10: "handlerSubsets",
-  11: "handlerMaxSubArray",
+  1: "twoSum",
+  2: "LinkedList",
+  3: "canJump",
+  4: "isValid",
+  5: "searchMatrix",
+  6: "maxArea",
+  7: "maxProfit",
+  8: "merge",
+  9: "maxDepth",
+  10: "subsets",
+  11: "maxSubArray",
+  12: "findPeakElement",
+  13: "majorityElement",
+  14: "lengthOfLongestSubstring",
   default: "defaultHandler",
 };
 
-const togglePassword = (id) => {
-  const input = document.getElementById(id);
-  const type = input.getAttribute("type") === "password" ? "text" : "password";
-  input.setAttribute("type", type);
-};
-
 module.exports = {
+  problemIdToHandlerMap,
   format_date: (date) => {
     if (!date) return "";
     return new Date(date).toLocaleDateString();
@@ -49,7 +48,12 @@ module.exports = {
     }
   },
   capitalize: (str) => problemIdToHandlerMap[str] || str,
-  togglePassword, // Make sure to export the function
+  togglePassword: (id) => {
+    const input = document.getElementById(id);
+    const type =
+      input.getAttribute("type") === "password" ? "text" : "password";
+    input.setAttribute("type", type);
+  },
 };
 
 Handlebars.registerHelper("ifEquals", (arg1, arg2, options) => {

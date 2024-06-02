@@ -1,4 +1,25 @@
+let problemIdToHandlerMap = {};
+
+async function fetchProblemIdToHandlerMap() {
+  try {
+    const response = await fetch("/api/problems/problem-handlers");
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    problemIdToHandlerMap = await response.json();
+    console.log("Fetched problemIdToHandlerMap:", problemIdToHandlerMap);
+  } catch (error) {
+    console.error("Error fetching problemIdToHandlerMap:", error);
+  }
+}
+
+function getFunctionName(problemId) {
+  return problemIdToHandlerMap[problemId] || problemIdToHandlerMap["default"];
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
+  await fetchProblemIdToHandlerMap(); // Ensure this runs before other code
+
   const runButton = document.getElementById("runCode");
   const submitButton = document.getElementById("submitCode");
   const testCases = document.querySelectorAll(".test-case");
@@ -100,11 +121,16 @@ document.addEventListener("DOMContentLoaded", async () => {
       try {
         const functionName = getFunctionName(problemId);
 
+        if (!functionName) {
+          throw new Error(
+            `Function name not found for problemId: ${problemId}`
+          );
+        }
+
         const functionBody = `
-return (function(${functionName}) {
-  ${userCode}
-  return ${functionName}(...args);
-})(...args)`;
+          ${userCode}
+          return ${functionName}(...args);
+        `;
 
         console.log(`Generated function body:\n${functionBody}`);
 
@@ -182,16 +208,10 @@ return (function(${functionName}) {
     }
   });
 
-  function getFunctionName(problemId) {
-    const handlerName =
-      problemIdToHandlerMap[problemId] || problemIdToHandlerMap["default"];
-    return handlerName;
-  }
-
-
   async function loadProblem(problemId) {
     const problem = mockProblems.find((p) => p.id === problemId);
     if (problem) {
+      console.log("Current problem data:", problem); // Log data for the current problem
       codeMirrorEditor.setValue(problem.starter_code);
       testCases.forEach((testCase, index) => {
         const example = problem.examples[index];

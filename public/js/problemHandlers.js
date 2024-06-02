@@ -31,7 +31,7 @@ function createBinaryTree(values) {
 }
 
 // Handler for Two Sum problem
-const handlerTwoSum = async (source_code) => {
+const twoSum = async (source_code) => {
   try {
     const nums = [
       [2, 7, 11, 15],
@@ -79,7 +79,7 @@ const handlerTwoSum = async (source_code) => {
 };
 
 // Handler for Reverse Linked List problem
-const handlerReverseLinkedList = async (source_code) => {
+const LinkedList = async (source_code) => {
   try {
     const tests = [[1, 2, 3, 4, 5], [5, 4, 3, 2, 1], [1, 2, 3], [1]];
     const answers = [[5, 4, 3, 2, 1], [1, 2, 3, 4, 5], [3, 2, 1], [1]];
@@ -104,7 +104,7 @@ const handlerReverseLinkedList = async (source_code) => {
 };
 
 // Handler for Jump Game problem
-const handlerJumpGame = async (source_code) => {
+const canJump = async (source_code) => {
   try {
     const tests = [
       [2, 3, 1, 1, 4],
@@ -129,7 +129,7 @@ const handlerJumpGame = async (source_code) => {
 };
 
 // Handler for Valid Parentheses problem
-const handlerValidParentheses = async (source_code) => {
+const isValid = async (source_code) => {
   try {
     const tests = ["()", "()[]{}", "(]", "([)]", "{[]}"];
     const answers = [true, true, false, false, true];
@@ -149,7 +149,7 @@ const handlerValidParentheses = async (source_code) => {
 };
 
 // Handler for Search a 2D Matrix problem
-const handlerSearchMatrix = async (source_code) => {
+const searchMatrix = async (source_code) => {
   try {
     const tests = [
       [
@@ -188,7 +188,7 @@ const handlerSearchMatrix = async (source_code) => {
 };
 
 // Handler for Container With Most Water problem
-const handlerMaxArea = async (source_code) => {
+const maxArea = async (source_code) => {
   try {
     const tests = [
       [1, 8, 6, 2, 5, 4, 8, 3, 7],
@@ -213,7 +213,7 @@ const handlerMaxArea = async (source_code) => {
 };
 
 // Handler for Merge Intervals problem
-const handlerMergeIntervals = async (source_code) => {
+const merge = async (source_code) => {
   try {
     const tests = [
       [
@@ -263,7 +263,7 @@ const handlerMergeIntervals = async (source_code) => {
 };
 
 // Handler for Maximum Depth of Binary Tree problem
-const handlerMaxDepth = async (source_code) => {
+const maxDepth = async (source_code) => {
   try {
     const tests = [[3, 9, 20, null, null, 15, 7], [1, null, 2], [], [1]];
     const answers = [3, 2, 0, 1];
@@ -284,7 +284,7 @@ const handlerMaxDepth = async (source_code) => {
 };
 
 // Handler for Best Time to Buy and Sell Stock problem
-const handlerMaxProfit = async (source_code) => {
+const maxProfit = async (source_code) => {
   try {
     const tests = [
       [7, 1, 5, 3, 6, 4],
@@ -309,7 +309,7 @@ const handlerMaxProfit = async (source_code) => {
 };
 
 // Handler for Subsets problem
-const handlerSubsets = async (source_code) => {
+const subsets = async (source_code) => {
   try {
     const tests = [[1, 2, 3], [0], [4, 4, 4, 1, 4]];
     const answers = [
@@ -346,7 +346,8 @@ const handlerSubsets = async (source_code) => {
   }
 };
 
-const handlerMaxSubArray = async (source_code) => {
+// Handler for Maximum Subarray problem
+const maxSubArray = async (source_code) => {
   try {
     const tests = [
       { input: [-2, 1, -3, 4, -1, 2, 1, -5, 4], output: 6 },
@@ -369,19 +370,126 @@ const handlerMaxSubArray = async (source_code) => {
   }
 };
 
+// Handler for Find Peak Element problem
+const findPeakElement = async (source_code) => {
+  try {
+    const tests = [
+      { input: [1, 2, 3, 1], output: 2 },
+      { input: [1, 2, 1, 3, 5, 6, 4], output: 5 },
+    ];
 
-module.exports = {
-  handlerTwoSum,
-  handlerReverseLinkedList,
-  handlerJumpGame,
-  handlerValidParentheses,
-  handlerSearchMatrix,
-  handlerMaxArea,
-  handlerMergeIntervals,
-  handlerMaxDepth,
-  handlerMaxProfit,
-  handlerSubsets,
-  handlerMaxSubArray,
+    for (let i = 0; i < tests.length; i++) {
+      const input = `const input = ${JSON.stringify(
+        tests[i].input
+      )}; return findPeakElement(input);`;
+      const functionBody = `
+        ${source_code}
+        ${input}
+      `;
+
+      console.log(
+        `Running code for test case ${i} with input: ${JSON.stringify(
+          tests[i].input
+        )}`
+      );
+
+      const userFunction = new Function(functionBody);
+      const output = userFunction();
+
+      console.log(
+        `Received output for test case ${i}: ${JSON.stringify(output)}`
+      );
+      assert.deepStrictEqual(output, tests[i].output);
+    }
+    return true;
+  } catch (error) {
+    console.log("findPeakElement handler function error:", error);
+    throw new Error(error);
+  }
 };
 
+// Handler for Majority Element problem
+const majorityElement = async (source_code) => {
+  try {
+    const tests = [
+      { input: [3, 2, 3], output: 3 },
+      { input: [2, 2, 1, 1, 1, 2, 2], output: 2 },
+    ];
 
+    for (let i = 0; i < tests.length; i++) {
+      const input = `const input = ${JSON.stringify(
+        tests[i].input
+      )}; return majorityElement(input);`;
+      const functionBody = `
+        ${source_code}
+        ${input}
+      `;
+
+      console.log(
+        `Running code for test case ${i} with input: ${JSON.stringify(
+          tests[i].input
+        )}`
+      );
+
+      const userFunction = new Function(functionBody);
+      const output = userFunction();
+
+      console.log(
+        `Received output for test case ${i}: ${JSON.stringify(output)}`
+      );
+      assert.deepStrictEqual(output, tests[i].output);
+    }
+    return true;
+  } catch (error) {
+    console.log("majorityElement handler function error:", error);
+    throw new Error(error);
+  }
+};
+
+// Handler for Longest Substring Without Repeating Characters problem
+const lengthOfLongestSubstring = async (source_code) => {
+  try {
+    const tests = [
+      { input: "abcabcbb", output: 3 },
+      { input: "bbbbb", output: 1 },
+      { input: "pwwkew", output: 3 },
+    ];
+
+    for (let i = 0; i < tests.length; i++) {
+      const input = `const input = "${tests[i].input}"; return lengthOfLongestSubstring(input);`;
+      const functionBody = `
+        ${source_code}
+        ${input}
+      `;
+
+      console.log(`Running code for test case ${i} with input: ${JSON.stringify(tests[i].input)}`);
+
+      const userFunction = new Function(functionBody);
+      const output = userFunction();
+
+      console.log(`Received output for test case ${i}: ${JSON.stringify(output)}`);
+      assert.deepStrictEqual(output, tests[i].output);
+    }
+    return true;
+  } catch (error) {
+    console.log("lengthOfLongestSubstring handler function error:", error);
+    throw new Error(error);
+  }
+};
+
+module.exports = {
+  twoSum,
+  LinkedList,
+  canJump,
+  isValid,
+  searchMatrix,
+  maxArea,
+  merge,
+  maxDepth,
+  maxProfit,
+  subsets,
+  maxSubArray,
+  findPeakElement,
+  majorityElement,
+  lengthOfLongestSubstring,
+};
