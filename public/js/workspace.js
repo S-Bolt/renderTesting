@@ -1,4 +1,6 @@
 let problemIdToHandlerMap = {};
+let mockProblems = []; 
+
 
 async function fetchProblemIdToHandlerMap() {
   try {
@@ -19,6 +21,7 @@ function getFunctionName(problemId) {
 
 document.addEventListener("DOMContentLoaded", async () => {
   await fetchProblemIdToHandlerMap(); // Ensure this runs before other code
+
 
   const runButton = document.getElementById("runCode");
   const submitButton = document.getElementById("submitCode");
