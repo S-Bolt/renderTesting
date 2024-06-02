@@ -2237,9 +2237,6 @@ textarea { resize: vertical; }
   text-decoration: none;
 } */
 
-
-
-
 .comment-card-container {
   padding: var(--spacing-4);
   border-radius: var(--radius-medium);
@@ -2297,7 +2294,12 @@ textarea { resize: vertical; }
   text-decoration: none;
 } 
 
-
+/*-----------------------------------*\
+  #Discussions
+\*-----------------------------------*/
+.discussions {
+ display: block;
+}
 
 
 

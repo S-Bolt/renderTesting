@@ -279,4 +279,23 @@ router.get("/problems", withAuth, async (req, res) => {
   }
 });
 
+// Route for displaying discussions with all comments
+router.get("/discussions", withAuth, async (req, res) => {
+  try {
+    const commentData = await Comment.findAll({
+      include: [{ all: true}]
+    });
+
+    const comments = commentData.map(comment => comment.get({ plain: true}));
+
+    res.render('discussions', {
+      comments,
+      logged_in: req.session.logged_in
+    });
+
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
 module.exports = router;
