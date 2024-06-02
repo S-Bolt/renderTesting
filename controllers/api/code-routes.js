@@ -1,5 +1,8 @@
 const router = require("express").Router();
-const { capitalize } = require("../../public/utils/helpers.js");
+const {
+  capitalize,
+  problemIdToHandlerMap,
+} = require("../../public/utils/helpers.js");
 const problemHandlers = require("../../public/js/problemHandlers.js");
 const { UserProblem } = require("../../models");
 
@@ -19,7 +22,7 @@ router.post("/submit-code", async (req, res) => {
   console.log("Session user_id:", req.session.user_id);
 
   try {
-    const handlerFunctionName = capitalize(problemId);
+    const handlerFunctionName = problemIdToHandlerMap[problemId];
     console.log("Handler Function Name:", handlerFunctionName);
     const handlerFunction = problemHandlers[handlerFunctionName];
     if (!handlerFunction) {

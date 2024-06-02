@@ -68,7 +68,7 @@ Problem.init(
     },
     starter_function_name: {
       type: DataTypes.STRING,
-      allowNull: false, 
+      allowNull: false,
     },
   },
   {
@@ -76,6 +76,7 @@ Problem.init(
     timestamps: true,
     underscored: true,
     modelName: "problem",
+    tableName: "problem", 
   }
 );
 

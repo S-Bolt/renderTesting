@@ -33,7 +33,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Toggle theme
   if (themeToggle) {
     themeToggle.addEventListener("click", () => {
-      console.log("Theme toggled");
       currentTheme = currentTheme === "dark" ? "light" : "dark";
       setTheme(currentTheme);
     });
@@ -125,6 +124,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const response = await fetch("/api/problems");
     problems = await response.json();
     renderProblemsList();
+    currentProblemIndex = getCurrentProblemIndex();
   };
 
   // Render problems list in the sidebar
@@ -143,7 +143,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   const getCurrentProblemIndex = () => {
     const path = window.location.pathname;
     const currentProblemId = path.split("/problems/")[1];
-    return problems.findIndex((problem) => problem.id === currentProblemId);
+    return problems.findIndex(
+      (problem) => problem.id.toString() === currentProblemId
+    );
   };
 
   // Navigate to problem by index
@@ -155,14 +157,16 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // Add event listeners for navigation buttons
   if (prevProblemButton) {
-    prevProblemButton.addEventListener("click", () => {
+    prevProblemButton.addEventListener("click", (event) => {
+      event.stopPropagation(); // Prevent the event from propagating
       const index = getCurrentProblemIndex();
       navigateToProblem(index - 1);
     });
   }
 
   if (nextProblemButton) {
-    nextProblemButton.addEventListener("click", () => {
+    nextProblemButton.addEventListener("click", (event) => {
+      event.stopPropagation(); // Prevent the event from propagating
       const index = getCurrentProblemIndex();
       navigateToProblem(index + 1);
     });
@@ -197,4 +201,3 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   await fetchProblems();
 });
-

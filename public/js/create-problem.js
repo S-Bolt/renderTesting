@@ -1,7 +1,7 @@
+// public/js/create-problem.js
 document.addEventListener("DOMContentLoaded", () => {
   const createProblemForm = document.getElementById("create-problem-form");
 
-  // Add event listeners for each input field to log their values
   const inputFields = [
     "title",
     "difficulty",
@@ -44,7 +44,6 @@ document.addEventListener("DOMContentLoaded", () => {
       .getElementById("starter_function_name")
       .value.trim();
 
-    // Parse the examples to ensure it's valid JSON
     let examplesParsed;
     try {
       examplesParsed = JSON.parse(examples);
@@ -84,6 +83,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const data = await response.json();
       alert("Problem created successfully!");
+      console.log("Problem created:", data);
       window.location.href = `/dashboard`;
     } catch (error) {
       console.error("Error creating problem:", error);

@@ -4,7 +4,8 @@ const problems = require("./mockProblems");
 const soultions = require("./mockSolution");
 
 const seedDatabase = async () => {
-  await sequelize.sync({ force: true });
+  // Sync the database without dropping existing tables
+  await sequelize.sync();
 
   // Create a default user
   const defaultUser = await User.create({

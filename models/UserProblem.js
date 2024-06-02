@@ -47,3 +47,5 @@ UserProblem.init(
 );
 
 module.exports = UserProblem;
+
+// So the errors you guys are having are because the tables in your database are either not created or not created correctly. 
