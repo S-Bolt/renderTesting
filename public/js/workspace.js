@@ -1,4 +1,26 @@
+let problemIdToHandlerMap = {};
+let mockProblems = [];
+
+async function fetchProblemIdToHandlerMap() {
+  try {
+    const response = await fetch("/api/problems/problem-handlers");
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    problemIdToHandlerMap = await response.json();
+    console.log("Fetched problemIdToHandlerMap:", problemIdToHandlerMap);
+  } catch (error) {
+    console.error("Error fetching problemIdToHandlerMap:", error);
+  }
+}
+
+function getFunctionName(problemId) {
+  return problemIdToHandlerMap[problemId] || problemIdToHandlerMap["default"];
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
+  await fetchProblemIdToHandlerMap(); // Ensure this runs before other code
+
   const runButton = document.getElementById("runCode");
   const submitButton = document.getElementById("submitCode");
   const testCases = document.querySelectorAll(".test-case");
@@ -20,25 +42,52 @@ document.addEventListener("DOMContentLoaded", async () => {
   const dislikesCount = document.getElementById("dislikes-count");
 
   let activeTestCase = 0;
-  let mockProblems = [];
 
   const jsConfetti = new JSConfetti(); // Initialize jsConfetti
 
   async function fetchProblems() {
     try {
       const response = await fetch("/api/problems");
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
       mockProblems = await response.json();
-      console.log("Fetched problems:", mockProblems);
-      if (problemId) {
-        loadProblem(problemId);
-      }
     } catch (error) {
-      console.error("Error fetching problems:", error);
+      console.error("Failed to fetch problems:", error);
     }
   }
+
+  async function fetchProblem(id) {
+    try {
+      const response = await fetch(`/api/problems/${id}`);
+      return await response.json();
+    } catch (error) {
+      console.error("Failed to fetch problem:", error);
+    }
+  }
+
+  async function updateEditor(problemId) {
+    const problem = await fetchProblem(problemId);
+
+    if (problem) {
+      document.getElementById("problem-title").innerText = problem.title;
+      problemStatement.innerHTML = `
+        <h4>Problem Statement</h4>
+        <p>${problem.problem_statement}</p>
+        <h4>Examples</h4>
+        <pre>${problem.examples}</pre>
+        <h4>Constraints</h4>
+        <pre>${problem.constraints}</pre>
+      `;
+
+      const handlerFunctionName = getFunctionName(problem.id);
+      functionNameElement.innerText = handlerFunctionName;
+    }
+  }
+
+  testCaseButtons.forEach((button) =>
+    button.addEventListener("click", (e) => {
+      const problemId = parseInt(e.target.getAttribute("data-problem-id"), 10);
+      updateEditor(problemId);
+    })
+  );
 
   async function fetchSavedCode(problemId) {
     try {
@@ -78,63 +127,32 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   });
 
-  runButton.addEventListener("click", () => {
-    const userCode = codeMirrorEditor.getValue();
-    console.log("User code:", userCode);
+  runButton.addEventListener("click", async () => {
+    const code = codeMirrorEditor.getValue();
+    const problemId = parseInt(
+      document
+        .querySelector(".test-case-btn.active")
+        .getAttribute("data-problem-id"),
+      10
+    );
 
-    let allPassed = true;
+    try {
+      const response = await fetch("/api/code/submit-code", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ code, problemId }),
+      });
 
-    testCases.forEach((testCase, index) => {
-      const input = testCase
-        .querySelector("p strong:nth-of-type(1)")
-        .nextSibling.textContent.trim();
-      const inputs = parseInputs(input);
-      const expectedOutput = JSON.parse(
-        testCase.querySelector(".output").textContent.trim()
-      );
-      const resultSpan = testCase.querySelector(".result");
+      const { results } = await response.json();
+      console.log("Results from server:", results);
 
-      console.log(`Running test case ${index} with input: ${input}`);
-      console.log(`Parsed inputs: ${JSON.stringify(inputs)}`);
-
-      try {
-        const functionName = getFunctionName(problemId);
-
-        const functionBody = `
-return (function(${functionName}) {
-  ${userCode}
-  return ${functionName}(...args);
-})(...args)`;
-
-        console.log(`Generated function body:\n${functionBody}`);
-
-        const userFunction = new Function("args", functionBody);
-
-        const output = userFunction(inputs);
-
-        console.log(`Output for test case ${index}: ${JSON.stringify(output)}`);
-
-        if (JSON.stringify(output) === JSON.stringify(expectedOutput)) {
-          resultSpan.textContent = "Passed";
-          resultSpan.style.color = "green";
-        } else {
-          resultSpan.textContent = `Failed (Got: ${JSON.stringify(output)})`;
-          resultSpan.style.color = "red";
-          allPassed = false;
-        }
-      } catch (error) {
-        console.error(`Error for test case ${index}:`, error);
-        resultSpan.textContent = `Error: ${error.message}`;
-        resultSpan.style.color = "red";
-        allPassed = false;
-      }
-    });
-
-    if (allPassed) {
-      jsConfetti.addConfetti(); // Trigger confetti effect
-      showToast("Congrats! All test cases passed!", "success");
-    } else {
-      showToast("Some test cases failed.", "error");
+      testCases.forEach((testCase) => {
+        testCase.innerHTML = results ? "Passed" : "Failed";
+      });
+    } catch (error) {
+      console.error("Error submitting code:", error);
     }
   });
 
@@ -182,16 +200,10 @@ return (function(${functionName}) {
     }
   });
 
-  function getFunctionName(problemId) {
-    const handlerName =
-      problemIdToHandlerMap[problemId] || problemIdToHandlerMap["default"];
-    return handlerName;
-  }
-
-
   async function loadProblem(problemId) {
     const problem = mockProblems.find((p) => p.id === problemId);
     if (problem) {
+      console.log("Current problem data:", problem); // Log data for the current problem
       codeMirrorEditor.setValue(problem.starter_code);
       testCases.forEach((testCase, index) => {
         const example = problem.examples[index];

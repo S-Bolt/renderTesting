@@ -2237,21 +2237,21 @@ textarea { resize: vertical; }
   text-decoration: none;
 } */
 
-
-
-
-.comment-card-container {
+.comment-card-container,
+.problem-card-container {
   padding: var(--spacing-4);
   border-radius: var(--radius-medium);
   background: var(--bg);
 }
 
-.comment-list {
+.comment-list,
+.problem-list {
   list-style: none;
   padding: 0;
 }
 
-.comment-card {
+.comment-card,
+.problem-card {
   background-color: var(--surface);
   padding: var(--spacing-4);
   border-radius: var(--radius-large);
@@ -2260,18 +2260,21 @@ textarea { resize: vertical; }
   transition: box-shadow var(--tr-duration-medium), transform var(--tr-duration-medium);
 }
 
-.comment-card:hover {
+.comment-card:hover,
+.problem-card:hover {
   transform: translateY(-10px);
   box-shadow: 10px 10px 30px var(--bg-dark-blue), -10px -10px 30px var(--bg);
 }
 
-.comment-card .card-content {
+.comment-card .card-content,
+.problem-card .card-content  {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-2);
 }
 
-.comment-card .card-text {
+.comment-card .card-text,
+.problem-card .card-text  {
   font-size: var(--fs-body-medium);
   color: var(--on-surface);
 }
@@ -2297,7 +2300,12 @@ textarea { resize: vertical; }
   text-decoration: none;
 } 
 
-
+/*-----------------------------------*\
+  #Discussions
+\*-----------------------------------*/
+.discussions {
+ display: block;
+}
 
 
 

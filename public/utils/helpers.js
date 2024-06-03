@@ -1,27 +1,33 @@
 const Handlebars = require("handlebars");
 
+// Define the problemIdToHandlerMap
 const problemIdToHandlerMap = {
-  1: "handlerTwoSum",
-  2: "handlerReverseLinkedList",
-  3: "handlerJumpGame",
-  4: "handlerValidParentheses",
-  5: "handlerSearchMatrix",
-  6: "handlerMaxArea",
-  8: "handlerMergeIntervals",
-  9: "handlerMaxDepth",
-  7: "handlerMaxProfit",
-  10: "handlerSubsets",
-  11: "handlerMaxSubArray",
+  1: "twoSum",
+  2: "reverseLinkedList",
+  3: "canJump",
+  4: "isValid",
+  5: "searchMatrix",
+  6: "maxArea",
+  7: "merge",
+  8: "maxDepth",
+  9: "maxProfit",
+  10: "subsets",
+  11: "maxSubArray",
+  12: "findPeakElement",
+  13: "majorityElement",
+  14: "lengthOfLongestSubstring",
+  15: "climbStairs",
+  16: "rob",
+  17: "findKthLargest",
+  18: "mergeTwoLists",
+  19: "findMin",
+  20: "threeSum",
   default: "defaultHandler",
 };
 
-const togglePassword = (id) => {
-  const input = document.getElementById(id);
-  const type = input.getAttribute("type") === "password" ? "text" : "password";
-  input.setAttribute("type", type);
-};
-
-module.exports = {
+// Define the helpers
+const helpers = {
+  problemIdToHandlerMap,
   format_date: (date) => {
     if (!date) return "";
     return new Date(date).toLocaleDateString();
@@ -49,26 +55,20 @@ module.exports = {
     }
   },
   capitalize: (str) => problemIdToHandlerMap[str] || str,
-  togglePassword, // Make sure to export the function
+  togglePassword: (id) => {
+    const input = document.getElementById(id);
+    const type =
+      input.getAttribute("type") === "password" ? "text" : "password";
+    input.setAttribute("type", type);
+  },
+  inc: function (value) {
+    return parseInt(value) + 1;
+  },
 };
 
-Handlebars.registerHelper("ifEquals", (arg1, arg2, options) => {
-  return arg1 == arg2 ? options.fn(this) : options.inverse(this);
+// Register the helpers
+Object.keys(helpers).forEach((helper) => {
+  Handlebars.registerHelper(helper, helpers[helper]);
 });
 
-Handlebars.registerHelper("difficultyClass", (difficulty) => {
-  switch (difficulty) {
-    case "Easy":
-      return "text-success";
-    case "Medium":
-      return "text-warning";
-    case "Hard":
-      return "text-danger";
-    default:
-      return "";
-  }
-});
-
-Handlebars.registerHelper("inc", function (value) {
-  return parseInt(value) + 1;
-});
+module.exports = helpers;

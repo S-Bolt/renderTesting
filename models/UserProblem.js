@@ -17,9 +17,10 @@ UserProblem.init(
         model: "user",
         key: "id",
       },
+      onDelete: "CASCADE",
     },
     problem_id: {
-      type: DataTypes.INTEGER, // Update to INTEGER to match Problem's id type
+      type: DataTypes.INTEGER,
       allowNull: false,
       references: {
         model: "problem",
@@ -32,6 +33,21 @@ UserProblem.init(
       allowNull: false,
     },
     results: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+    },
+    liked: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+    },
+    disliked: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+    },
+    starred: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: false,

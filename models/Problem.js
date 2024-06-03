@@ -68,7 +68,7 @@ Problem.init(
     },
     starter_function_name: {
       type: DataTypes.STRING,
-      allowNull: false, 
+      allowNull: false,
     },
   },
   {
@@ -77,6 +77,7 @@ Problem.init(
     freezeTableName: true,
     underscored: true,
     modelName: "problem",
+    tableName: "problem", 
   }
 );
 
