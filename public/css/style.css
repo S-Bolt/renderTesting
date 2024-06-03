@@ -2527,3 +2527,19 @@ textarea { resize: vertical; }
 } */
 
 
+
+
+
+button#solution-tab,.tab.link.active{
+  display: contents;
+
+}
+
+button#description-tab,.tablink{
+  display: contents;
+  font-family: 'Material Symbols Outlined';
+}
+div.problem-solution{
+  font-family: monospace ;
+}
+
