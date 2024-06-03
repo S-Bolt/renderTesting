@@ -21,6 +21,7 @@ const getProblems = async (req, res) => {
     });
     res.status(200).json(problems);
   } catch (err) {
+    console.log(err.message);
     res.status(500).json(err);
   }
 };

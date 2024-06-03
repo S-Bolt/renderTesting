@@ -74,6 +74,7 @@ Problem.init(
   {
     sequelize,
     timestamps: true,
+    freezeTableName: true,
     underscored: true,
     modelName: "problem",
     tableName: "problem", 
