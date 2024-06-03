@@ -3,26 +3,45 @@
     <div class="col justify-content-center">
       <form class="form signup-form">
         <div class="form-group">
+          <h4>
+            <strong>
           <label for="email-signup">Your Email</label>
+          </h4>
+          </strong>
           <div class="flex">
             <div class="relative w-full">
+              <h4>
               <input type="email" placeholder="name@company.com" id="email-signup" class="form-input" required />
+              </h4>
             </div>
           </div>
         </div>
         <div class="form-group">
+          <h4>
+            <strong>
           <label for="username-signup">Your Username</label>
+          </strong>
+          </h4>
           <div class="flex">
             <div class="relative w-full">
+              <h4>
               <input type="text" placeholder="Your username" id="username-signup" class="form-input" required />
+             </h4>
             </div>
           </div>
         </div>
         <div class="form-group">
-          <label for="password-signup">Your Password</label>
+          <h4>
+            <strong>
+          <label for="password-signup">Your Password</h4>
+          </strong>
+            </h4>
+          </label>
           <div class="flex">
             <div class="relative w-full">
+              <h4>
               <input type="password" placeholder="***********" id="password-signup" class="form-input" required />
+              </h4>
               <button type="button" class="toggle-password" aria-label="Toggle password visibility" onclick="togglePassword('password-signup')">
                 <span class="material-symbols-outlined">visibility</span>
               </button>
@@ -30,10 +49,12 @@
           </div>
         </div>
         <div class="form-group">
-          <label for="confirm-password-signup">Confirm Password</label>
+          <label for="confirm-password-signup"><h4><strong>Confirm Password</h4></strong></label>
           <div class="flex">
             <div class="relative w-full">
+              <h4>
               <input type="password" placeholder="***********" id="confirm-password-signup" class="form-input" required />
+              </h4>
               <button type="button" class="toggle-password" aria-label="Toggle password visibility" onclick="togglePassword('confirm-password-signup')">
                 <span class="material-symbols-outlined">visibility</span>
               </button>
@@ -41,19 +62,25 @@
           </div>
         </div>
         <button type="submit" class="btn-primary">
-          <span class="flex items-center transition-all duration-200 rounded-md text-lg px-4 py-2">Sign Up</span>
+          <span class="flex items-center transition-all duration-200 rounded-md text-lg px-4 py-2"><h4>Sign Up</h4></span>
         </button>
         <button type="button" class="btn-google">
           <span class="items-center flex justify-center">
             <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024" class="w-6 h-6 mr-2" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
               <path d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm167 633.6C638.4 735 583 757 516.9 757c-95.7 0-178.5-54.9-218.8-134.9C281.5 589 272 551.6 272 512s9.5-77 26.1-110.1c40.3-80.1 123.1-135 218.8-135 66 0 121.4 24.3 163.9 63.8L610.6 401c-25.4-24.3-57.7-36.6-93.6-36.6-63.8 0-117.8 43.1-137.1 101-4.9 14.7-7.7 30.4-7.7 46.6s2.8 31.9 7.7 46.6c19.3 57.9 73.3 101 137 101 33 0 61-8.7 82.9-23.4 26-17.4 43.2-43.3 48.9-74H516.9v-94.8h230.7c2.9 16.1 4.4 32.8 4.4 50.1 0 74.7-26.7 137.4-73 180.1z"></path>
             </svg>
+            <h4>
             Login with Google
+            </h4>
           </span>
         </button>
         <div class="flex gap-2 text-small inline-elements">
-          <span>Already have an account?</span>
-          <a class="text-blue-500" href="/login">Login Instead</a>
+          <h4>
+          <span><strong>Already have an account?</strong></span>
+          </h4>
+          <h4>
+          <a class="text-blue-500" href="/login"><strong>Login Instead!</a></strong> 
+          </h4>
         </div>
       </form>
     </div>

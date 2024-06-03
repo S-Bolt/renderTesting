@@ -1192,7 +1192,7 @@ textarea { resize: vertical; }
     transition: all 0.3s;
     border-radius: 0.5rem;
     background: transparent;
-    color: #e5e5e5;
+    color:white;
     border: none;
     cursor: pointer;
 }
@@ -1240,12 +1240,12 @@ textarea { resize: vertical; }
 
 .pagination-numbers .btn-page {
     background: rgba(64, 64, 64, 0.1);
-    color: #e5e5e5;
+    color:black;
 }
 
 .pagination-numbers .btn-page:hover,
 .pagination-numbers .btn-primary {
-    background: white;
+    background:#ffc068;
     color: black;
 }
 
@@ -1380,7 +1380,7 @@ textarea { resize: vertical; }
     position: absolute;
     top: -4rem;
     right: 0;
-    color: #aaa;
+    color:white;
     font-size: 34px;
     font-weight: bold;
     cursor: pointer;
@@ -1406,19 +1406,28 @@ textarea { resize: vertical; }
 /** 
 *SIGN UP SYLING
 */
-.signup{background-color:var(--secondary-container);}
+.signup{background-color:var(--secondary-container);
+background-color: #77b1f5;
+}
 .email-signup{text-underline-position: below;}
-.labelfor{background-color: #2563eb;}
+.labelfor{background-color: #458bdb;}
 .form.form.login-form{
   padding-bottom:30px;
   padding-top:30px;
-  padding-right: 50px;}
+  padding-right: 50px;
+}
+ div.form-group{
+  color:white;
+ }
+
   
   
   /**
   *LOGIN
   */
-  .login{background-color:var(--secondary-container);}
+  .login{background-color:var(--secondary-container);
+   background-color: #77b1f5;
+  }
   .form.form.login-form{
     padding-bottom:30px;
     padding-top:30px;
@@ -1432,7 +1441,7 @@ textarea { resize: vertical; }
   a.dropdown-item{
     display: block;
     position: relative;
-    background-color:#ffd8a1;
+    background-color:#77b1f5;
     color:black;
     text-decoration: underline;
   }
