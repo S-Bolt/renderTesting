@@ -10,6 +10,7 @@ User.hasMany(UserProblem, {
 });
 Problem.belongsTo(User, {
   foreignKey: "user_id",
+  onDelete: 'CASCADE',
 });
 
 User.belongsToMany(Problem,{
