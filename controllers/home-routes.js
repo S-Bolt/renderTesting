@@ -2,6 +2,8 @@ const router = require("express").Router();
 const { User, Problem, UserProblem, Comment } = require("../models");
 const withAuth = require("../public/utils/auth.js");
 
+
+
 // Route for displaying the homepage with problems
 router.get("/", async (req, res) => {
   try {
@@ -13,6 +15,7 @@ router.get("/", async (req, res) => {
         },
       ],
     });
+
     const problems = problemData.map((problem) => {
       const plainProblem = problem.get({ plain: true });
       plainProblem.solved = false;
@@ -53,6 +56,7 @@ router.get("/", async (req, res) => {
       logged_in: req.session.logged_in,
       problems,
       isDashboard: false,
+      isHomepage: true,
     });
   } catch (err) {
     console.error(err);
@@ -70,6 +74,7 @@ router.get("/problems/:id", withAuth, async (req, res) => {
     const problemData = await Problem.findByPk(id, {
       include: [{ model: User, attributes: ["username"] }],
     });
+    console.log(problemData);
     if (!problemData) {
       res.status(404).json({ message: "No problem found with this id!" });
       return;
@@ -79,12 +84,15 @@ router.get("/problems/:id", withAuth, async (req, res) => {
       attributes: ["id", "title"],
       order: [["order", "ASC"]],
     });
+    console.log(problem);
     res.render("workspace", {
       problem,
+      username: req.session.username,
       logged_in: req.session.logged_in,
       bodyClass: "workspace-body",
       problems: allProblems.map((p) => p.get({ plain: true })),
       isDashboard: false,
+      isHomepage: false,
     });
   } catch (err) {
     console.error(err);
@@ -98,7 +106,7 @@ router.get("/login", (req, res) => {
     res.redirect("/homepage");
     return;
   }
-  res.render("login", { isDashboard: false });
+  res.render("login", { isDashboard: false, isHomepage: false });
 });
 
 // Route for displaying the sign-up page
@@ -107,7 +115,7 @@ router.get("/signUp", (req, res) => {
     res.redirect("/");
     return;
   }
-  res.render("signUp", { isDashboard: false });
+  res.render("signUp", { isDashboard: false, isHomepage: false });
 });
 
 // Render the leaderboard view
@@ -121,8 +129,10 @@ router.get("/leaderboard", withAuth, async (req, res) => {
     const leaderboardData = users.map((user) => user.get({ plain: true }));
     res.render("leaderboard", {
       leaderboard: leaderboardData,
+      username: req.session.username,
       logged_in: req.session.logged_in,
       isDashboard: false,
+      isHomepage: false,
     });
   } catch (err) {
     console.error("Error rendering leaderboard:", err);
@@ -143,8 +153,10 @@ router.get("/dashboard", withAuth, async (req, res) => {
     const user = userData.get({ plain: true });
     res.render("dashboard", {
       user,
+      username: req.session.username,
       logged_in: req.session.logged_in,
       partial: "profile",
+      isHomepage: false,
     });
   } catch (err) {
     console.error(err);
@@ -156,8 +168,10 @@ router.get("/dashboard", withAuth, async (req, res) => {
 router.get("/dashboard/new-problem", withAuth, async (req, res) => {
   try {
     res.render("dashboard", {
+      username: req.session.username,
       logged_in: req.session.logged_in,
       partial: "create-problem",
+      isHomepage: false,
     });
   } catch (err) {
     console.error(err);
@@ -183,9 +197,11 @@ router.get("/dashboard/problems", withAuth, async (req, res) => {
     );
 
     res.render("dashboard", {
+      username: req.session.username,
       logged_in: req.session.logged_in,
       problems,
       partial: "my-problems",
+      isHomepage: false,
     });
   } catch (err) {
     console.error(err);
@@ -215,9 +231,11 @@ router.get("/dashboard/comments", withAuth, async (req, res) => {
     );
 
     res.render("dashboard", {
+      username: req.session.username,
       logged_in: req.session.logged_in,
       comments,
       partial: "my-comments",
+      isHomepage: false,
     });
   } catch (err) {
     console.error(err);
@@ -243,9 +261,11 @@ router.get("/dashboard/liked-problems", withAuth, async (req, res) => {
     );
 
     res.render("dashboard", {
+      username: req.session.username,
       logged_in: req.session.logged_in,
       problems: likedProblems,
       partial: "liked-problems",
+      isHomepage: false,
     });
   } catch (err) {
     console.error(err);
@@ -271,9 +291,11 @@ router.get("/dashboard/disliked-problems", withAuth, async (req, res) => {
     );
 
     res.render("dashboard", {
+      username: req.session.username,
       logged_in: req.session.logged_in,
       problems: dislikedProblems,
       partial: "disliked-problems",
+      isHomepage: false,
     });
   } catch (err) {
     console.error(err);
@@ -299,16 +321,17 @@ router.get("/dashboard/starred-problems", withAuth, async (req, res) => {
     );
 
     res.render("dashboard", {
+      username: req.session.username,
       logged_in: req.session.logged_in,
       problems: starredProblems,
       partial: "starred-problems",
+      isHomepage: false,
     });
   } catch (err) {
     console.error(err);
     res.status(500).json(err);
   }
 });
-
 
 // Route for displaying all problems for a specific user
 router.get("/problems", withAuth, async (req, res) => {
@@ -321,14 +344,17 @@ router.get("/problems", withAuth, async (req, res) => {
         },
       ],
     });
+    console.log(problems);
     const userProblems = await UserProblem.findAll({
       where: {
         user_id: req.session.user_id,
       },
     });
+    console.log(userProblems);
     const solvedProblems = userProblems.map(
       (userProblem) => userProblem.problem_id
     );
+    console.log(solvedProblems);
     const problemsData = problems.map((problem) => {
       const plainProblem = problem.get({ plain: true });
       plainProblem.solved = solvedProblems.includes(problem.id);
@@ -341,9 +367,11 @@ router.get("/problems", withAuth, async (req, res) => {
       return plainProblem;
     });
     res.render("problems", {
+      username: req.session.username,
       problems: problemsData,
       logged_in: req.session.logged_in,
-      isDashboard: true, // Dashboard page
+      isDashboard: false, // Dashboard page
+      isHomepage: false,
     });
   } catch (err) {
     console.error(err);
@@ -351,20 +379,24 @@ router.get("/problems", withAuth, async (req, res) => {
   }
 });
 
+
+
 // Route for displaying discussions with all comments
 router.get("/discussions", withAuth, async (req, res) => {
   try {
     const commentData = await Comment.findAll({
-      include: [{ all: true}]
+      include: [{ all: true }],
     });
 
-    const comments = commentData.map(comment => comment.get({ plain: true}));
+    const comments = commentData.map((comment) => comment.get({ plain: true }));
 
-    res.render('discussions', {
+    res.render("discussions", {
+      username: req.session.username,
       comments,
-      logged_in: req.session.logged_in
+      logged_in: req.session.logged_in,
+      isDashboard: false,
+      isHomepage: false,
     });
-
   } catch (err) {
     res.status(500).json(err);
   }

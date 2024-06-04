@@ -70,13 +70,17 @@ Problem.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
+    problem_solution: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
   },
   {
     sequelize,
     timestamps: true,
     freezeTableName: true,
     underscored: true,
-    modelName: 'problem',
+    modelName: "problem",
     tableName: "problem", 
   }
 );

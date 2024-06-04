@@ -1,7 +1,10 @@
-const User = require("./User");
-const Problem = require("./Problem");
-const UserProblem = require("./UserProblem");
-const Comment = require("./Comment");
+const Sequelize = require("sequelize");
+const sequelize = require("../config/connection");
+
+const User = require('./User');
+const Problem = require('./Problem');
+const UserProblem = require('./UserProblem');
+const Comment = require('./Comment');
 
 
 User.hasMany(UserProblem, {
