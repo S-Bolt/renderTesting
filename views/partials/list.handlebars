@@ -9,7 +9,75 @@
     <script src="https://www.youtube.com/iframe_api"></script>
 </head>
 <body>
-    <h1><strong>Test Your Knowledge Below!💡👇🏻</strong></h1>
+    {{#unless isHomepage}}
+    <div class="category-list-container">
+        <ul id="category-list" class="category-list"></ul>
+    </div>
+    <div class="dropdowns-container">
+        <div class="dropdown" role="menu">
+            <button class="dropdown-btn" aria-haspopup="true" aria-expanded="false">Status <i class="fa fa-caret-down"></i></button>
+            <div class="dropdown-content" data-filter="status" aria-label="submenu">
+                <a href="#" data-value="solved" role="menuitem">Solved</a>
+                <a href="#" data-value="unsolved" role="menuitem">Unsolved</a>
+            </div>
+        </div>
+        <div class="dropdown" role="menu">
+            <button class="dropdown-btn" aria-haspopup="true" aria-expanded="false">Popularity <i class="fa fa-caret-down"></i></button>
+            <div class="dropdown-content" data-filter="popularity" aria-label="submenu">
+                <a href="#" data-value="most-popular" role="menuitem">Most Popular</a>
+                <a href="#" data-value="least-popular" role="menuitem">Least Popular</a>
+            </div>
+        </div>
+        <div class="dropdown" role="menu">
+            <button class="dropdown-btn" aria-haspopup="true" aria-expanded="false">Difficulty <i class="fa fa-caret-down"></i></button>
+            <div class="dropdown-content" data-filter="difficulty" aria-label="submenu">
+                <a href="#" data-value="easy" role="menuitem">Easy</a>
+                <a href="#" data-value="medium" role="menuitem">Medium</a>
+                <a href="#" data-value="hard" role="menuitem">Hard</a>
+            </div>
+        </div>
+        <div class="dropdown" role="menu">
+            <button class="dropdown-btn" aria-haspopup="true" aria-expanded="false">Category <i class="fa fa-caret-down"></i></button>
+            <div class="dropdown-content" id="category-dropdown-content" data-filter="category" aria-label="submenu">
+                <!-- Category options will be populated here dynamically -->
+            </div>
+        </div>
+    </div>
+    {{/unless}}
+    
+    <div class="hidden" style="display: none;"><div class="category-list-container">
+        <ul id="category-list" class="category-list"></ul>
+    </div>
+    <div class="dropdowns-container">
+        <div class="dropdown" role="menu">
+            <button class="dropdown-btn" aria-haspopup="true" aria-expanded="false">Status <i class="fa fa-caret-down"></i></button>
+            <div class="dropdown-content" data-filter="status" aria-label="submenu">
+                <a href="#" data-value="solved" role="menuitem">Solved</a>
+                <a href="#" data-value="unsolved" role="menuitem">Unsolved</a>
+            </div>
+        </div>
+        <div class="dropdown" role="menu">
+            <button class="dropdown-btn" aria-haspopup="true" aria-expanded="false">Popularity <i class="fa fa-caret-down"></i></button>
+            <div class="dropdown-content" data-filter="popularity" aria-label="submenu">
+                <a href="#" data-value="most-popular" role="menuitem">Most Popular</a>
+                <a href="#" data-value="least-popular" role="menuitem">Least Popular</a>
+            </div>
+        </div>
+        <div class="dropdown" role="menu">
+            <button class="dropdown-btn" aria-haspopup="true" aria-expanded="false">Difficulty <i class="fa fa-caret-down"></i></button>
+            <div class="dropdown-content" data-filter="difficulty" aria-label="submenu">
+                <a href="#" data-value="easy" role="menuitem">Easy</a>
+                <a href="#" data-value="medium" role="menuitem">Medium</a>
+                <a href="#" data-value="hard" role="menuitem">Hard</a>
+            </div>
+        </div>
+        <div class="dropdown" role="menu">
+            <button class="dropdown-btn" aria-haspopup="true" aria-expanded="false">Category <i class="fa fa-caret-down"></i></button>
+            <div class="dropdown-content" id="category-dropdown-content" data-filter="category" aria-label="submenu">
+                <!-- Category options will be populated here dynamically -->
+            </div>
+        </div>
+    </div></div>
     <div class="problems-container">
         <table class="problems-table">
             <thead class="table-head">
@@ -48,17 +116,26 @@
             </tbody>
             <tfoot>
                 <tr>
-                    <td colspan="5">
-                        <div class="pagination-controls">
-                            <button id="prev-page" class="pagination-button" disabled>
-                                <i class="fas fa-arrow-left"></i> Previous
-                            </button>
-                            <div class="pagination-numbers" id="page-numbers"></div>
-                            <button id="next-page" class="pagination-button">
-                                Next <i class="fas fa-arrow-right"></i>
-                            </button>
-                        </div>
-                    </td>
+                <td colspan="5">
+                    <div class="pagination-controls">
+                    <div class="per-page">
+                        <label for="problems-per-page" class="sr-only">Problems per page:</label>
+                        <select id="problems-per-page" class="dropdown-select">
+                        <option value="10">10 / page</option>
+                        <option value="20">20 / page</option>
+                        </select>
+                    </div>
+                    <nav role="navigation" class="page-navigation">
+                        <button class="pagination-button" id="prev-page" disabled>
+                        <i class="fas fa-arrow-left"></i> Previous
+                        </button>
+                        <div class="pagination-numbers" id="page-numbers"></div>
+                        <button class="pagination-button" id="next-page">
+                        Next <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </nav>
+                    </div>
+                </td>
                 </tr>
             </tfoot>
         </table>

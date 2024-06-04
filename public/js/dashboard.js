@@ -1,16 +1,15 @@
-// public/js/dashboard.js
-
 document.addEventListener("DOMContentLoaded", () => {
   const filePicker = document.getElementById("file-picker");
   const profilePicture = document.getElementById("profile-picture");
   const progressBar = document.getElementById("progress-bar");
   const imageUploadError = document.getElementById("image-upload-error");
-  const submitButton = document.getElementById("submit-button");
   const updateSuccess = document.getElementById("update-success");
   const updateError = document.getElementById("update-error");
   const errorDiv = document.getElementById("error");
 
-  filePicker.addEventListener("change", handleImageChange);
+  document
+    .getElementById("blog-image")
+    .addEventListener("change", handleImageChange);
 
   document
     .getElementById("profile-form")
@@ -24,9 +23,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
       try {
         const formData = new FormData();
-        formData.append("file", file);
+        formData.append("file", file); // Corrected key to match backend
 
-        const response = await fetch("/api/upload", {
+        const response = await fetch("/api/users/upload", {
           method: "POST",
           body: formData,
         });

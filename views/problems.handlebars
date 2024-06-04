@@ -1,44 +1,126 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Top Interview Problems</title>
-    <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            border: 1px solid #dddddd;
-            text-align: left;
-            padding: 8px;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Top Interview Problems</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="/js/topbar.js" type="module"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+  <script type="module" src="/js/topbar.js"></script>
+  <script type="module" src="/js/global.js"></script>
+  
+
+
+
 </head>
-<body>
-    <h1>Top Interview Problems</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Title</th>
-                <th>Difficulty</th>
-                <th>Acceptance</th>
-            </tr>
+<body class="bodyClass">
+
+  {{default-sidebar}}
+  {{!-- <section class="banner">
+    {{> problem-banners}}
+  </section> --}}
+
+  <div class="center-container">
+    <div class="category-list-container">
+      <ul id="category-list" class="category-list"></ul>
+    </div>
+
+    <div class="dropdowns-container">
+      <div class="per-page">
+            <label for="problems-per-page" class="sr-only">Problems per page:</label>
+            <select id="problems-per-page" class="dropdown-select">
+              <option value="10">10 / page</option>
+              <option value="20">20 / page</option>
+            </select>
+          </div>
+      <div class="dropdown" role="menu">
+        <button class="dropdown-btn" aria-haspopup="true" aria-expanded="false">Status <i class="fa fa-caret-down"></i></button>
+        <div class="dropdown-content" data-filter="status" aria-label="submenu">
+          <a href="#" data-value="solved" role="menuitem">Solved</a>
+          <a href="#" data-value="unsolved" role="menuitem">Unsolved</a>
+        </div>
+      </div>
+      <div class="dropdown" role="menu">
+        <button class="dropdown-btn" aria-haspopup="true" aria-expanded="false">Popularity <i class="fa fa-caret-down"></i></button>
+        <div class="dropdown-content" data-filter="popularity" aria-label="submenu">
+          <a href="#" data-value="most-popular" role="menuitem">Most Popular</a>
+          <a href="#" data-value="least-popular" role="menuitem">Least Popular</a>
+        </div>
+      </div>
+      <div class="dropdown" role="menu">
+        <button class="dropdown-btn" aria-haspopup="true" aria-expanded="false">Difficulty <i class="fa fa-caret-down"></i></button>
+        <div class="dropdown-content" data-filter="difficulty" aria-label="submenu">
+          <a href="#" data-value="easy" role="menuitem" class="difficulty Easy">Easy</a>
+          <a href="#" data-value="medium" role="menuitem" class="difficulty Medium">Medium</a>
+          <a href="#" data-value="hard" role="menuitem" class="difficulty Hard">Hard</a>
+        </div>
+      </div>
+      <div class="dropdown" role="menu">
+        <button class="dropdown-btn" aria-haspopup="true" aria-expanded="false">Category <i class="fa fa-caret-down"></i></button>
+        <div class="dropdown-content" id="category-dropdown-content" data-filter="category" aria-label="submenu">
+          <!-- Category options will be populated here dynamically -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="problems-container">
+    {{#if currentDifficultyFilter}}
+      {{#if (eq currentDifficultyFilter "easy")}}
+        {{> easy-problems easyProblems=filteredProblems}}
+      {{else if (eq currentDifficultyFilter "medium")}}
+        {{> medium-problems mediumProblems=filteredProblems}}
+      {{else if (eq currentDifficultyFilter "hard")}}
+        {{> hard-problems hardProblems=filteredProblems}}
+      {{/if}}
+    {{else}}
+      <table class="problems-table">
+        <thead class="table-head">
+          <tr class="table-row">
+            <th scope="col">Status</th>
+            <th scope="col">Title</th>
+            <th scope="col">Difficulty</th>
+            <th scope="col">Category</th>
+            <th scope="col">Solution</th>
+          </tr>
         </thead>
-        <tbody>
-            {{#each problems}}
-            <tr>
-                <td>{{this.id}}</td>
-                <td>{{this.title}}</td>
-                <td>{{this.difficulty}}</td>
-                <td>{{this.acceptance}}</td>
-            </tr>
-            {{/each}}
+        <tbody id="problems-table-body">
+          <!-- Problem rows will be populated here -->
         </tbody>
-    </table>
+        <tfoot>
+        <tr>
+          <td colspan="5">
+            <div class="pagination-wrapper">
+              <div class="pagination-controls">
+                
+                <nav role="navigation" class="page-navigation">
+                  <button class="pagination-button" id="prev-page" disabled>
+                    <i class="fas fa-arrow-left"></i> Previous
+                  </button>
+                  <div class="pagination-numbers" id="page-numbers"></div>
+                  <button class="pagination-button" id="next-page">
+                    Next <i class="fas fa-arrow-right"></i>
+                  </button>
+                </nav>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </tfoot>
+
+      </table>
+    {{/if}}
+  </div>
+
+  <div id="youtube-modal" class="modal">
+    <div class="youtube-modal-content">
+      <span class="close-btn">&times;</span>
+      <div id="youtube-player"></div>
+    </div>
+  </div>
+
+  <script src="/js/problemsTable.js"></script>
 </body>
 </html>

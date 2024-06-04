@@ -57,21 +57,8 @@ class LinkedList {
     }
     return arr;
   }
-
-  reverse(head) {
-    let prev = null;
-    let current = head;
-    while (current) {
-      let next = current.next;
-      current.next = prev;
-      prev = current;
-      current = next;
-    }
-    return prev;
-  }
 }
 
-// Define handlers for each problem
 const problemHandlers = {
   twoSum: async (source_code) => {
     try {
@@ -86,6 +73,8 @@ const problemHandlers = {
         [1, 2],
         [0, 1],
       ];
+
+      const results = [];
 
       for (let i = 0; i < nums.length; i++) {
         const functionBody = `
@@ -103,21 +92,21 @@ const problemHandlers = {
           `Expected output for test case ${i}: ${JSON.stringify(answers[i])}`
         );
 
-        if (
-          JSON.stringify(output.sort((a, b) => a - b)) !==
-          JSON.stringify(answers[i].sort((a, b) => a - b))
-        ) {
-          throw new Error(
-            `Test case ${i} failed: expected ${JSON.stringify(
-              answers[i]
-            )}, but got ${JSON.stringify(output)}`
-          );
-        }
+        const passed =
+          JSON.stringify(output.sort((a, b) => a - b)) ===
+          JSON.stringify(answers[i].sort((a, b) => a - b));
+
+        results.push({
+          input: { nums: nums[i], target: targets[i] },
+          output,
+          expected: answers[i],
+          passed,
+        });
       }
-      return true;
+      return { success: true, results };
     } catch (error) {
       console.log("twoSum handler function error:", error);
-      throw new Error(error);
+      return { success: false, error: error.message, results };
     }
   },
 
@@ -129,14 +118,18 @@ const problemHandlers = {
         { input: [1], expected: [1] },
       ];
 
+      const testCaseResults = [];
+
       for (let i = 0; i < tests.length; i++) {
         const inputLinkedList = LinkedList.fromArray(tests[i].input);
 
         const functionBody = `
-          ${source_code}
-          return LinkedList.toArray(reverseLinkedList(${JSON.stringify(
-            inputLinkedList
-          )}));
+          return (function() {
+            ${source_code}
+            return LinkedList.toArray(reverseLinkedList(${JSON.stringify(
+              inputLinkedList
+            )}));
+          })();
         `;
 
         console.log(
@@ -152,16 +145,23 @@ const problemHandlers = {
           `Received output for test case ${i}: ${JSON.stringify(outputArray)}`
         );
 
-        assert.deepStrictEqual(
+        const passed = assert.deepStrictEqual(
           outputArray,
           tests[i].expected,
           `Test case ${i} failed`
         );
+
+        testCaseResults.push({
+          input: tests[i].input,
+          output: outputArray,
+          expected: tests[i].expected,
+          passed: true,
+        });
       }
-      return true;
+      return { success: true, testCaseResults };
     } catch (error) {
       console.log("Error from reverseLinkedList handler:", error);
-      throw new Error(error);
+      return { success: false, error: error.message, testCaseResults };
     }
   },
 
@@ -174,6 +174,9 @@ const problemHandlers = {
         [2, 5, 0, 0],
       ];
       const answers = [true, false, true, true];
+
+      const testCaseResults = [];
+
       for (let i = 0; i < tests.length; i++) {
         const functionBody = `
           ${source_code}
@@ -191,16 +194,19 @@ const problemHandlers = {
 
         console.log(`Output for test case ${i}: ${result}`);
 
-        if (result !== answers[i]) {
-          throw new Error(
-            `Test case ${i} failed: expected ${answers[i]}, but got ${result}`
-          );
-        }
+        const passed = result === answers[i];
+
+        testCaseResults.push({
+          input: tests[i],
+          output: result,
+          expected: answers[i],
+          passed,
+        });
       }
-      return true;
+      return { success: true, testCaseResults };
     } catch (error) {
       console.log("Error from jumpGame handler: ", error);
-      throw new Error(error);
+      return { success: false, error: error.message, testCaseResults };
     }
   },
 
@@ -208,6 +214,9 @@ const problemHandlers = {
     try {
       const tests = ["()", "()[]{}", "(]", "([)]", "{[]}"];
       const answers = [true, true, false, false, true];
+
+      const testCaseResults = [];
+
       for (let i = 0; i < tests.length; i++) {
         const functionBody = `
           ${source_code}
@@ -221,16 +230,19 @@ const problemHandlers = {
 
         console.log(`Output for test case ${i}: ${result}`);
 
-        if (result !== answers[i]) {
-          throw new Error(
-            `Test case ${i} failed: expected ${answers[i]}, but got ${result}`
-          );
-        }
+        const passed = result === answers[i];
+
+        testCaseResults.push({
+          input: tests[i],
+          output: result,
+          expected: answers[i],
+          passed,
+        });
       }
-      return true;
+      return { success: true, testCaseResults };
     } catch (error) {
       console.log("Error from validParentheses handler: ", error);
-      throw new Error(error);
+      return { success: false, error: error.message, testCaseResults };
     }
   },
 
@@ -257,6 +269,9 @@ const problemHandlers = {
         [[[1, 1]], 2],
       ];
       const answers = [true, false, false, false];
+
+      const testCaseResults = [];
+
       for (let i = 0; i < tests.length; i++) {
         const functionBody = `
           ${source_code}
@@ -274,16 +289,19 @@ const problemHandlers = {
 
         console.log(`Output for test case ${i}: ${result}`);
 
-        if (result !== answers[i]) {
-          throw new Error(
-            `Test case ${i} failed: expected ${answers[i]}, but got ${result}`
-          );
-        }
+        const passed = result === answers[i];
+
+        testCaseResults.push({
+          input: tests[i],
+          output: result,
+          expected: answers[i],
+          passed,
+        });
       }
-      return true;
+      return { success: true, testCaseResults };
     } catch (error) {
       console.log("Error from searchMatrix handler: ", error);
-      throw new Error(error);
+      return { success: false, error: error.message, testCaseResults };
     }
   },
 
@@ -296,6 +314,9 @@ const problemHandlers = {
         [2, 3, 10, 5, 7, 8, 9],
       ];
       const answers = [49, 1, 6, 36];
+
+      const testCaseResults = [];
+
       for (let i = 0; i < tests.length; i++) {
         const functionBody = `
           ${source_code}
@@ -313,16 +334,19 @@ const problemHandlers = {
 
         console.log(`Output for test case ${i}: ${result}`);
 
-        if (result !== answers[i]) {
-          throw new Error(
-            `Test case ${i} failed: expected ${answers[i]}, but got ${result}`
-          );
-        }
+        const passed = result === answers[i];
+
+        testCaseResults.push({
+          input: tests[i],
+          output: result,
+          expected: answers[i],
+          passed,
+        });
       }
-      return true;
+      return { success: true, testCaseResults };
     } catch (error) {
       console.log("Error from maxArea handler: ", error);
-      throw new Error(error);
+      return { success: false, error: error.message, testCaseResults };
     }
   },
 
@@ -358,6 +382,9 @@ const problemHandlers = {
         [[0, 4]],
         [[1, 4]],
       ];
+
+      const testCaseResults = [];
+
       for (let i = 0; i < tests.length; i++) {
         const functionBody = `
           ${source_code}
@@ -375,18 +402,19 @@ const problemHandlers = {
 
         console.log(`Output for test case ${i}: ${JSON.stringify(result)}`);
 
-        if (JSON.stringify(result) !== JSON.stringify(answers[i])) {
-          throw new Error(
-            `Test case ${i} failed: expected ${JSON.stringify(
-              answers[i]
-            )}, but got ${JSON.stringify(result)}`
-          );
-        }
+        const passed = JSON.stringify(result) === JSON.stringify(answers[i]);
+
+        testCaseResults.push({
+          input: tests[i],
+          output: result,
+          expected: answers[i],
+          passed,
+        });
       }
-      return true;
+      return { success: true, testCaseResults };
     } catch (error) {
       console.log("Error from merge handler: ", error);
-      throw new Error(error);
+      return { success: false, error: error.message, testCaseResults };
     }
   },
 
@@ -394,6 +422,9 @@ const problemHandlers = {
     try {
       const tests = [[3, 9, 20, null, null, 15, 7], [1, null, 2], [], [1]];
       const answers = [3, 2, 0, 1];
+
+      const testCaseResults = [];
+
       for (let i = 0; i < tests.length; i++) {
         const root = createBinaryTree(tests[i]);
         const functionBody = `
@@ -412,16 +443,19 @@ const problemHandlers = {
 
         console.log(`Output for test case ${i}: ${result}`);
 
-        if (result !== answers[i]) {
-          throw new Error(
-            `Test case ${i} failed: expected ${answers[i]}, but got ${result}`
-          );
-        }
+        const passed = result === answers[i];
+
+        testCaseResults.push({
+          input: tests[i],
+          output: result,
+          expected: answers[i],
+          passed,
+        });
       }
-      return true;
+      return { success: true, testCaseResults };
     } catch (error) {
       console.log("Error from maxDepth handler: ", error);
-      throw new Error(error);
+      return { success: false, error: error.message, testCaseResults };
     }
   },
 
@@ -434,6 +468,9 @@ const problemHandlers = {
         [2, 1, 4],
       ];
       const answers = [5, 0, 1, 3];
+
+      const testCaseResults = [];
+
       for (let i = 0; i < tests.length; i++) {
         const functionBody = `
           ${source_code}
@@ -451,16 +488,19 @@ const problemHandlers = {
 
         console.log(`Output for test case ${i}: ${result}`);
 
-        if (result !== answers[i]) {
-          throw new Error(
-            `Test case ${i} failed: expected ${answers[i]}, but got ${result}`
-          );
-        }
+        const passed = result === answers[i];
+
+        testCaseResults.push({
+          input: tests[i],
+          output: result,
+          expected: answers[i],
+          passed,
+        });
       }
-      return true;
+      return { success: true, testCaseResults };
     } catch (error) {
       console.log("Error from maxProfit handler: ", error);
-      throw new Error(error);
+      return { success: false, error: error.message, testCaseResults };
     }
   },
 
@@ -484,6 +524,9 @@ const problemHandlers = {
           [1, 4],
         ],
       ];
+
+      const testCaseResults = [];
+
       for (let i = 0; i < tests.length; i++) {
         const functionBody = `
           ${source_code}
@@ -501,18 +544,19 @@ const problemHandlers = {
 
         console.log(`Output for test case ${i}: ${JSON.stringify(result)}`);
 
-        if (JSON.stringify(result) !== JSON.stringify(answers[i])) {
-          throw new Error(
-            `Test case ${i} failed: expected ${JSON.stringify(
-              answers[i]
-            )}, but got ${JSON.stringify(result)}`
-          );
-        }
+        const passed = JSON.stringify(result) === JSON.stringify(answers[i]);
+
+        testCaseResults.push({
+          input: tests[i],
+          output: result,
+          expected: answers[i],
+          passed,
+        });
       }
-      return true;
+      return { success: true, testCaseResults };
     } catch (error) {
       console.log("Error from subsets handler: ", error);
-      throw new Error(error);
+      return { success: false, error: error.message, testCaseResults };
     }
   },
 
@@ -523,6 +567,8 @@ const problemHandlers = {
         { input: [1], output: 1 },
         { input: [5, 4, -1, 7, 8], output: 23 },
       ];
+
+      const testCaseResults = [];
 
       for (let i = 0; i < tests.length; i++) {
         const functionBody = `
@@ -541,16 +587,19 @@ const problemHandlers = {
 
         console.log(`Output for test case ${i}: ${result}`);
 
-        if (result !== tests[i].output) {
-          throw new Error(
-            `Test case ${i} failed: expected ${tests[i].output}, but got ${result}`
-          );
-        }
+        const passed = result === tests[i].output;
+
+        testCaseResults.push({
+          input: tests[i].input,
+          output: result,
+          expected: tests[i].output,
+          passed,
+        });
       }
-      return true;
+      return { success: true, testCaseResults };
     } catch (error) {
       console.log("Error from maxSubArray handler: ", error);
-      throw new Error(error);
+      return { success: false, error: error.message, testCaseResults };
     }
   },
 
@@ -560,6 +609,8 @@ const problemHandlers = {
         { input: [1, 2, 3, 1], output: 2 },
         { input: [1, 2, 1, 3, 5, 6, 4], output: 5 },
       ];
+
+      const testCaseResults = [];
 
       for (let i = 0; i < tests.length; i++) {
         const functionBody = `
@@ -578,16 +629,19 @@ const problemHandlers = {
 
         console.log(`Output for test case ${i}: ${result}`);
 
-        if (result !== tests[i].output) {
-          throw new Error(
-            `Test case ${i} failed: expected ${tests[i].output}, but got ${result}`
-          );
-        }
+        const passed = result === tests[i].output;
+
+        testCaseResults.push({
+          input: tests[i].input,
+          output: result,
+          expected: tests[i].output,
+          passed,
+        });
       }
-      return true;
+      return { success: true, testCaseResults };
     } catch (error) {
       console.log("findPeakElement handler function error:", error);
-      throw new Error(error);
+      return { success: false, error: error.message, testCaseResults };
     }
   },
 
@@ -597,6 +651,8 @@ const problemHandlers = {
         { input: [3, 2, 3], output: 3 },
         { input: [2, 2, 1, 1, 1, 2, 2], output: 2 },
       ];
+
+      const testCaseResults = [];
 
       for (let i = 0; i < tests.length; i++) {
         const functionBody = `
@@ -615,16 +671,19 @@ const problemHandlers = {
 
         console.log(`Output for test case ${i}: ${result}`);
 
-        if (result !== tests[i].output) {
-          throw new Error(
-            `Test case ${i} failed: expected ${tests[i].output}, but got ${result}`
-          );
-        }
+        const passed = result === tests[i].output;
+
+        testCaseResults.push({
+          input: tests[i].input,
+          output: result,
+          expected: tests[i].output,
+          passed,
+        });
       }
-      return true;
+      return { success: true, testCaseResults };
     } catch (error) {
       console.log("majorityElement handler function error:", error);
-      throw new Error(error);
+      return { success: false, error: error.message, testCaseResults };
     }
   },
 
@@ -635,6 +694,8 @@ const problemHandlers = {
         { input: "bbbbb", output: 1 },
         { input: "pwwkew", output: 3 },
       ];
+
+      const testCaseResults = [];
 
       for (let i = 0; i < tests.length; i++) {
         const functionBody = `
@@ -651,16 +712,19 @@ const problemHandlers = {
 
         console.log(`Output for test case ${i}: ${result}`);
 
-        if (result !== tests[i].output) {
-          throw new Error(
-            `Test case ${i} failed: expected ${tests[i].output}, but got ${result}`
-          );
-        }
+        const passed = result === tests[i].output;
+
+        testCaseResults.push({
+          input: tests[i].input,
+          output: result,
+          expected: tests[i].output,
+          passed,
+        });
       }
-      return true;
+      return { success: true, testCaseResults };
     } catch (error) {
       console.log("lengthOfLongestSubstring handler function error:", error);
-      throw new Error(error);
+      return { success: false, error: error.message, testCaseResults };
     }
   },
 
@@ -668,6 +732,9 @@ const problemHandlers = {
     try {
       const tests = [2, 3, 4];
       const answers = [2, 3, 5];
+
+      const testCaseResults = [];
+
       for (let i = 0; i < tests.length; i++) {
         const functionBody = `
           ${source_code}
@@ -681,16 +748,19 @@ const problemHandlers = {
 
         console.log(`Output for test case ${i}: ${result}`);
 
-        if (result !== answers[i]) {
-          throw new Error(
-            `Test case ${i} failed: expected ${answers[i]}, but got ${result}`
-          );
-        }
+        const passed = result === answers[i];
+
+        testCaseResults.push({
+          input: tests[i],
+          output: result,
+          expected: answers[i],
+          passed,
+        });
       }
-      return true;
+      return { success: true, testCaseResults };
     } catch (error) {
       console.log("Error from climbStairs handler: ", error);
-      throw new Error(error);
+      return { success: false, error: error.message, testCaseResults };
     }
   },
 
@@ -701,6 +771,9 @@ const problemHandlers = {
         [2, 7, 9, 3, 1],
       ];
       const answers = [4, 12];
+
+      const testCaseResults = [];
+
       for (let i = 0; i < tests.length; i++) {
         const functionBody = `
           ${source_code}
@@ -718,16 +791,19 @@ const problemHandlers = {
 
         console.log(`Output for test case ${i}: ${result}`);
 
-        if (result !== answers[i]) {
-          throw new Error(
-            `Test case ${i} failed: expected ${answers[i]}, but got ${result}`
-          );
-        }
+        const passed = result === answers[i];
+
+        testCaseResults.push({
+          input: tests[i],
+          output: result,
+          expected: answers[i],
+          passed,
+        });
       }
-      return true;
+      return { success: true, testCaseResults };
     } catch (error) {
       console.log("Error from rob handler: ", error);
-      throw new Error(error);
+      return { success: false, error: error.message, testCaseResults };
     }
   },
 
@@ -737,6 +813,8 @@ const problemHandlers = {
         { input: [3, 2, 1, 5, 6, 4], k: 2, output: 5 },
         { input: [3, 2, 3, 1, 2, 4, 5, 5, 6], k: 4, output: 4 },
       ];
+
+      const testCaseResults = [];
 
       for (let i = 0; i < tests.length; i++) {
         const functionBody = `
@@ -757,16 +835,20 @@ const problemHandlers = {
 
         console.log(`Output for test case ${i}: ${result}`);
 
-        if (result !== tests[i].output) {
-          throw new Error(
-            `Test case ${i} failed: expected ${tests[i].output}, but got ${result}`
-          );
-        }
+        const passed = result === tests[i].output;
+
+        testCaseResults.push({
+          input: tests[i].input,
+          k: tests[i].k,
+          output: result,
+          expected: tests[i].output,
+          passed,
+        });
       }
-      return true;
+      return { success: true, testCaseResults };
     } catch (error) {
       console.log("Error from findKthLargest handler: ", error);
-      throw new Error(error);
+      return { success: false, error: error.message, testCaseResults };
     }
   },
 
@@ -777,6 +859,9 @@ const problemHandlers = {
         { l1: [], l2: [], output: [] },
         { l1: [], l2: [0], output: [0] },
       ];
+
+      const testCaseResults = [];
+
       for (let i = 0; i < tests.length; i++) {
         const functionBody = `
           ${source_code}
@@ -796,18 +881,21 @@ const problemHandlers = {
 
         console.log(`Output for test case ${i}: ${result}`);
 
-        if (JSON.stringify(result) !== JSON.stringify(tests[i].output)) {
-          throw new Error(
-            `Test case ${i} failed: expected ${JSON.stringify(
-              tests[i].output
-            )}, but got ${JSON.stringify(result)}`
-          );
-        }
+        const passed =
+          JSON.stringify(result) === JSON.stringify(tests[i].output);
+
+        testCaseResults.push({
+          l1: tests[i].l1,
+          l2: tests[i].l2,
+          output: result,
+          expected: tests[i].output,
+          passed,
+        });
       }
-      return true;
+      return { success: true, testCaseResults };
     } catch (error) {
       console.log("Error from mergeTwoLists handler: ", error);
-      throw new Error(error);
+      return { success: false, error: error.message, testCaseResults };
     }
   },
 
@@ -817,6 +905,8 @@ const problemHandlers = {
         { input: [3, 4, 5, 1, 2], output: 1 },
         { input: [4, 5, 6, 7, 0, 1, 2], output: 0 },
       ];
+
+      const testCaseResults = [];
 
       for (let i = 0; i < tests.length; i++) {
         const functionBody = `
@@ -835,16 +925,19 @@ const problemHandlers = {
 
         console.log(`Output for test case ${i}: ${result}`);
 
-        if (result !== tests[i].output) {
-          throw new Error(
-            `Test case ${i} failed: expected ${tests[i].output}, but got ${result}`
-          );
-        }
+        const passed = result === tests[i].output;
+
+        testCaseResults.push({
+          input: tests[i].input,
+          output: result,
+          expected: tests[i].output,
+          passed,
+        });
       }
-      return true;
+      return { success: true, testCaseResults };
     } catch (error) {
       console.log("Error from findMin handler: ", error);
-      throw new Error(error);
+      return { success: false, error: error.message, testCaseResults };
     }
   },
 
@@ -861,6 +954,8 @@ const problemHandlers = {
         { input: [], output: [] },
         { input: [0], output: [] },
       ];
+
+      const testCaseResults = [];
 
       for (let i = 0; i < tests.length; i++) {
         const functionBody = `
@@ -879,18 +974,20 @@ const problemHandlers = {
 
         console.log(`Output for test case ${i}: ${JSON.stringify(result)}`);
 
-        if (JSON.stringify(result) !== JSON.stringify(tests[i].output)) {
-          throw new Error(
-            `Test case ${i} failed: expected ${JSON.stringify(
-              tests[i].output
-            )}, but got ${JSON.stringify(result)}`
-          );
-        }
+        const passed =
+          JSON.stringify(result) === JSON.stringify(tests[i].output);
+
+        testCaseResults.push({
+          input: tests[i].input,
+          output: result,
+          expected: tests[i].output,
+          passed,
+        });
       }
-      return true;
+      return { success: true, testCaseResults };
     } catch (error) {
       console.log("Error from threeSum handler: ", error);
-      throw new Error(error);
+      return { success: false, error: error.message, testCaseResults };
     }
   },
 };

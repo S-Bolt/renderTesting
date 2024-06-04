@@ -1,5 +1,6 @@
 let problemIdToHandlerMap = {};
 let mockProblems = [];
+let codeMirrorEditor;
 
 async function fetchProblemIdToHandlerMap() {
   try {
@@ -16,105 +17,141 @@ async function fetchProblemIdToHandlerMap() {
 
 function getFunctionName(problemId) {
   return problemIdToHandlerMap[problemId] || problemIdToHandlerMap["default"];
+  console.log("Function name for problem ID:", problemId, functionName);
+}
+
+async function fetchProblems() {
+  try {
+    const response = await fetch("/api/problems");
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    mockProblems = await response.json();
+  } catch (error) {
+    console.error("Failed to fetch problems:", error);
+  }
+}
+
+async function fetchProblem(id) {
+  try {
+    const response = await fetch(`/api/problems/${id}`);
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    return await response.json();
+  } catch (error) {
+    console.error("Failed to fetch problem:", error);
+  }
+}
+
+async function fetchSavedCode(problemId) {
+  try {
+    const response = await fetch(`/api/code/submissions/${problemId}`);
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    const submission = await response.json();
+    if (submission && submission.code) {
+      codeMirrorEditor.setValue(submission.code);
+    }
+  } catch (error) {
+    console.error("Error fetching saved code:", error);
+  }
+}
+
+async function updateEditor(problemId) {
+  try {
+    const problem = await fetchProblem(problemId);
+    if (!problem) return;
+
+    const problemTitle = document.getElementById("problem-title");
+    const problemStatement = document.getElementById("problem-statement");
+    const solutionElement = document.getElementById("solution");
+    const functionNameElement = document.getElementById("functionName");
+
+    if (problemTitle)
+      problemTitle.innerText = problem.title || "Title not available";
+    if (problemStatement) {
+      problemStatement.innerHTML = `
+        <h4>Problem Statement</h4>
+        <p>${problem.problem_statement || "Problem statement not available"}</p>
+        <h4>Examples</h4>
+        <pre>${JSON.stringify(problem.examples || [], null, 2)}</pre>
+        <h4>Constraints</h4>
+        <pre>${problem.constraints || "Constraints not available"}</pre>
+      `;
+    }
+    if (solutionElement) {
+      solutionElement.innerHTML = `
+        <h1>${problem.title || "Title not available"} Solution</h1>
+        <pre class="solution-text"><code>${
+          problem.problem_solution || "Solution not available"
+        }</code></pre>
+      `;
+    }
+    if (functionNameElement) {
+      functionNameElement.innerText = getFunctionName(problem.id);
+    }
+
+    await fetchSavedCode(problemId); // Fetch saved code after loading the problem
+  } catch (error) {
+    console.error("Error updating editor:", error);
+  }
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-  await fetchProblemIdToHandlerMap(); // Ensure this runs before other code
+  codeMirrorEditor = CodeMirror.fromTextArea(
+    document.getElementById("codeEditor"),
+    {
+      mode: "xml",
+      theme: "dracula",
+      lineNumbers: true,
+      lineWrapping: false,
+    }
+  );
+
+  const likesCount = document.getElementById("likes-count");
+  const dislikesCount = document.getElementById("dislikes-count");
+  const thumbsUpToggle = document.getElementById("thumbs-up-toggle");
+  const thumbsDownToggle = document.getElementById("thumbs-down-toggle");
+  const starToggle = document.getElementById("star-toggle");
+  const thumbsUpIcon = document.querySelector(".thumbs-up-icon");
+  const thumbsDownIcon = document.querySelector(".thumbs-down-icon");
+  const starIcon = document.querySelector(".star-icon");
+  const commentToggle = document.getElementById("comment-toggle");
+  const commentSection = document.getElementById("comment-section");
+
+  await fetchProblemIdToHandlerMap();
+  await fetchProblems();
 
   const runButton = document.getElementById("runCode");
   const submitButton = document.getElementById("submitCode");
   const testCases = document.querySelectorAll(".test-case");
   const testCaseButtons = document.querySelectorAll(".test-case-btn");
   const problemIdElement = document.getElementById("problemId");
+    const leftContainer = document.querySelector(".left-container");
+
   const problemId = problemIdElement
     ? parseInt(problemIdElement.value, 10)
     : null;
-  const thumbsUpIcon = document.querySelector(".thumbs-up-icon");
-  const thumbsDownIcon = document.querySelector(".thumbs-down-icon");
-  const starIcon = document.querySelector(".star-icon");
-  const thumbsUpToggle = document.getElementById("thumbs-up-toggle");
-  const thumbsDownToggle = document.getElementById("thumbs-down-toggle");
-  const starToggle = document.getElementById("star-toggle");
-  const commentToggle = document.getElementById("comment-toggle");
-  const commentSection = document.getElementById("comment-section");
-  const leftContainer = document.querySelector(".left-container");
-  const likesCount = document.getElementById("likes-count");
-  const dislikesCount = document.getElementById("dislikes-count");
+
+  if (problemId) {
+    await updateEditor(problemId);
+    setActiveTestCase(0);
+  } else {
+    console.error("No problem ID found in the DOM.");
+  }
 
   let activeTestCase = 0;
-
-  const jsConfetti = new JSConfetti(); // Initialize jsConfetti
-
-  async function fetchProblems() {
-    try {
-      const response = await fetch("/api/problems");
-      mockProblems = await response.json();
-    } catch (error) {
-      console.error("Failed to fetch problems:", error);
-    }
-  }
-
-  async function fetchProblem(id) {
-    try {
-      const response = await fetch(`/api/problems/${id}`);
-      return await response.json();
-    } catch (error) {
-      console.error("Failed to fetch problem:", error);
-    }
-  }
-
-  async function updateEditor(problemId) {
-    const problem = await fetchProblem(problemId);
-
-    if (problem) {
-      document.getElementById("problem-title").innerText = problem.title;
-      problemStatement.innerHTML = `
-        <h4>Problem Statement</h4>
-        <p>${problem.problem_statement}</p>
-        <h4>Examples</h4>
-        <pre>${problem.examples}</pre>
-        <h4>Constraints</h4>
-        <pre>${problem.constraints}</pre>
-      `;
-
-      const handlerFunctionName = getFunctionName(problem.id);
-      functionNameElement.innerText = handlerFunctionName;
-    }
-  }
-
-  testCaseButtons.forEach((button) =>
-    button.addEventListener("click", (e) => {
-      const problemId = parseInt(e.target.getAttribute("data-problem-id"), 10);
-      updateEditor(problemId);
-    })
-  );
-
-  async function fetchSavedCode(problemId) {
-    try {
-      const response = await fetch(`/api/code/submissions/${problemId}`);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const submission = await response.json();
-      if (submission && submission.code) {
-        codeMirrorEditor.setValue(submission.code);
-      }
-    } catch (error) {
-      console.error("Error fetching saved code:", error);
-    }
-  }
+  const jsConfetti = new JSConfetti();
 
   function setActiveTestCase(index) {
+    if (testCases.length !== testCaseButtons.length) {
+      console.error("Mismatch between test cases and buttons");
+      return;
+    }
     testCases.forEach((testCase, i) => {
-      if (i === index) {
-        testCase.style.display = "block";
-        testCaseButtons[i].style.color = "white";
-        testCaseButtons[i].style.backgroundColor = "#333";
-        testCaseButtons[i].textContent = `Case ${i + 1}`;
-      } else {
-        testCase.style.display = "none";
-        testCaseButtons[i].style.color = "gray";
-        testCaseButtons[i].style.backgroundColor = "transparent";
+      if (testCase) {
+        testCase.style.display = i === index ? "block" : "none";
+      }
+      if (testCaseButtons[i]) {
+        testCaseButtons[i].style.color = i === index ? "white" : "gray";
+        testCaseButtons[i].style.backgroundColor =
+          i === index ? "#333" : "transparent";
         testCaseButtons[i].textContent = `Case ${i + 1}`;
       }
     });
@@ -129,12 +166,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   runButton.addEventListener("click", async () => {
     const code = codeMirrorEditor.getValue();
-    const problemId = parseInt(
-      document
-        .querySelector(".test-case-btn.active")
-        .getAttribute("data-problem-id"),
-      10
-    );
+    const problemId = parseInt(document.getElementById("problemId").value, 10);
+
+    if (isNaN(problemId)) {
+      console.error("Invalid problem ID.");
+      return;
+    }
 
     try {
       const response = await fetch("/api/code/submit-code", {
@@ -145,12 +182,45 @@ document.addEventListener("DOMContentLoaded", async () => {
         body: JSON.stringify({ code, problemId }),
       });
 
-      const { results } = await response.json();
-      console.log("Results from server:", results);
+      const data = await response.json();
+      const { success, testCaseResults = [] } = data;
+      console.log("Results from server:", success, testCaseResults);
 
-      testCases.forEach((testCase) => {
-        testCase.innerHTML = results ? "Passed" : "Failed";
+      if (!Array.isArray(testCaseResults)) {
+        console.error("Invalid testCaseResults from server");
+        return;
+      }
+
+      testCases.forEach((testCase, index) => {
+        const example = testCaseResults[index];
+        if (example) {
+          const inputElement = testCase.querySelector(".input");
+          const outputElement = testCase.querySelector(".output");
+          const resultElement = testCase.querySelector(".result");
+
+          if (inputElement) {
+            inputElement.textContent = `Input: ${JSON.stringify(
+              example.input
+            )}`;
+          }
+          if (outputElement) {
+            outputElement.textContent = `Output: ${JSON.stringify(
+              example.output
+            )}`;
+          }
+          if (resultElement) {
+            resultElement.textContent = `Result: ${
+              example.passed ? "Passed" : "Failed"
+            }`;
+          }
+        }
       });
+
+      if (success) {
+        showToast("Congrats! All test cases passed!", "success");
+      } else {
+        showToast("Some test cases failed.", "error");
+      }
     } catch (error) {
       console.error("Error submitting code:", error);
     }
@@ -159,6 +229,13 @@ document.addEventListener("DOMContentLoaded", async () => {
   submitButton.addEventListener("click", async () => {
     const userCode = codeMirrorEditor.getValue();
     console.log("Submitting code:", userCode);
+    const problemId = parseInt(document.getElementById("problemId").value, 10);
+    console.log("Problem ID:", problemId);
+
+    if (isNaN(problemId)) {
+      console.error("Invalid problem ID.");
+      return;
+    }
 
     try {
       const response = await fetch(`/api/code/submit-code`, {
@@ -174,9 +251,44 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
 
       const data = await response.json();
-      const results = data.results;
+      console.log("Submit response data:", data);
+      const { success, testCaseResults = [] } = data;
+      console.log("Submit response data:", success, testCaseResults);
 
-      if (results) {
+      if (!Array.isArray(testCaseResults)) {
+        console.error("Invalid testCaseResults from server");
+        return;
+      }
+
+      testCases.forEach((testCase, index) => {
+        const example = testCaseResults[index];
+        if (example) {
+          const inputElement = testCase.querySelector(".input");
+          const outputElement = testCase.querySelector(".output");
+          const resultElement = testCase.querySelector(".result");
+
+          if (inputElement) {
+            inputElement.textContent = `Input: ${JSON.stringify(
+              example.input
+            )}`;
+            console.log("Input:", example.input);
+          }
+          if (outputElement) {
+            outputElement.textContent = `Output: ${JSON.stringify(
+              example.output
+            )}`;
+            console.log("Output:", example.output);
+          }
+          if (resultElement) {
+            resultElement.textContent = `Result: ${
+              example.passed ? "Passed" : "Failed"
+            }`;
+            console.log("Passed:", example.passed);
+          }
+        }
+      });
+
+      if (success) {
         jsConfetti.addConfetti(); // Trigger confetti effect
         showToast("Congrats! All test cases passed!", "success");
 
@@ -199,57 +311,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       showToast(`Error: ${error.message}`, "error");
     }
   });
-
-  async function loadProblem(problemId) {
-    const problem = mockProblems.find((p) => p.id === problemId);
-    if (problem) {
-      console.log("Current problem data:", problem); // Log data for the current problem
-      codeMirrorEditor.setValue(problem.starter_code);
-      testCases.forEach((testCase, index) => {
-        const example = problem.examples[index];
-        if (example) {
-          const inputElement = testCase.querySelector(".input");
-          const outputElement = testCase.querySelector(".output");
-          if (inputElement) {
-            inputElement.textContent = example.inputText;
-          }
-          if (outputElement) {
-            outputElement.textContent = example.outputText;
-          }
-        }
-      });
-      setActiveTestCase(0); // Ensure the first test case is shown by default
-    }
-    await fetchSavedCode(problemId); // Fetch saved code after loading the problem
-  }
-
-  function parseInputs(input) {
-    const inputs = [];
-    const regex =
-      /(?:nums|target|head|s|height|prices|matrix|intervals|root) = (\[.*?\]|\d+|'.*?')/g;
-    let match;
-    while ((match = regex.exec(input)) !== null) {
-      try {
-        inputs.push(JSON.parse(match[1]));
-      } catch (error) {
-        console.error(`Error parsing JSON: ${match[1]}`, error);
-        inputs.push(match[1].replace(/'/g, "")); // Remove quotes for strings
-      }
-    }
-    return inputs;
-  }
-
-  const codeMirrorEditor = CodeMirror.fromTextArea(
-    document.getElementById("codeEditor"),
-    {
-      mode: "xml",
-      theme: "dracula",
-      lineNumbers: true,
-      lineWrapping: false, // Prevent line wrapping
-    }
-  );
-
-  await fetchProblems();
 
   // Toggle comment section visibility and enable scrolling
   commentToggle.addEventListener("click", () => {
@@ -322,8 +383,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   await fetchComments();
 
-  // Fetch initial likes and dislikes count
-  const fetchFeedback = async () => {
+  async function fetchFeedback() {
     try {
       const response = await fetch(`/api/problems/${problemId}/feedback`);
       if (!response.ok) {
@@ -346,7 +406,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     } catch (error) {
       console.error("Error fetching feedback:", error);
     }
-  };
+  }
 
   await fetchFeedback();
 
@@ -471,3 +531,34 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   });
 });
+
+function openTab(evt, tabName) {
+  var i, tabcontent, tablinks;
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
+  tablinks = document.getElementsByClassName("tablink");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" active", "");
+  }
+  document.getElementById(tabName).style.display = "block";
+  evt.currentTarget.className += " active";
+
+  // Enable Y scrolling if the solution tab is active
+  const leftContainer = document.querySelector(".left-container");
+  if (tabName === "solution") {
+    leftContainer.style.overflowY = "auto";
+  } else {
+    leftContainer.style.overflowY = "hidden";
+  }
+
+  // Ensure the title is displayed
+  const problemTitle = document.getElementById("problem-title");
+  if (problemTitle) {
+    problemTitle.style.display = "block";
+  }
+}
+
+// Open the default tab
+document.getElementById("description-tab").click();
