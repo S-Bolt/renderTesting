@@ -1,10 +1,10 @@
 // controllers/api/user-routes.js
 const router = require("express").Router();
-const { User, UserProblem } = require("../../models"); 
+const { User, UserProblem } = require("../../models");
 const multer = require("multer");
 const path = require("path");
 const withAuth = require("../../public/utils/auth.js");
-const bcrypt = require('bcrypt');
+const bcrypt = require("bcrypt");
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -220,12 +220,10 @@ router.post("/google-login", async (req, res) => {
     });
   } catch (err) {
     console.error("Error during Google login/signup:", err);
-    res
-      .status(500)
-      .json({
-        message:
-          "An error occurred during Google login/signup. Please try again later.",
-      });
+    res.status(500).json({
+      message:
+        "An error occurred during Google login/signup. Please try again later.",
+    });
   }
 });
 

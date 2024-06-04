@@ -17,6 +17,8 @@ const getProblems = async (req, res) => {
         "handler_function",
         "order",
         "user_id",
+        "starter_function_name",
+        "problem_solution",
       ],
     });
     res.status(200).json(problems);
@@ -47,10 +49,11 @@ const getProblemById = async (req, res) => {
         "handler_function",
         "order",
         "user_id",
-        "starter_function_name", // Include this attribute
+        "starter_function_name",
+        "problem_solution",
       ],
     });
-
+console.log(problemData);
     if (!problemData) {
       return res
         .status(404)
@@ -58,7 +61,7 @@ const getProblemById = async (req, res) => {
     }
 
     const problem = problemData.get({ plain: true });
-
+console.log(problem);
     return res.json(problem);
   } catch (err) {
     console.error(err);
@@ -73,8 +76,9 @@ const solveProblem = async (req, res) => {
       res.status(404).json({ message: "No problem found with this id!" });
       return;
     }
-
+    
     const user = await User.findByPk(req.session.user_id);
+    console.log(user);
     if (!user) {
       res.status(404).json({ message: "No user found with this id!" });
       return;
@@ -83,6 +87,7 @@ const solveProblem = async (req, res) => {
     let userProblem = await UserProblem.findOne({
       where: { user_id: req.session.user_id, problem_id: req.params.id },
     });
+    console.log(userProblem);
 
     if (!userProblem) {
       userProblem = await UserProblem.create({
