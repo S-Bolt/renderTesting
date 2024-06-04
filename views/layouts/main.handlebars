@@ -37,10 +37,10 @@
     {{> topbar}}
     
     <!-- Include Sidebars -->
-    {{#if isDashboard}}
-        {{> dashboard-sidebar}}
+   {{#if isDashboard}}
+        {{> dashboard-sidebar username=username logged_in=logged_in}}
     {{else}}
-        {{> default-sidebar}}
+        {{> default-sidebar username=username logged_in=logged_in}}
     {{/if}}
     
 
