@@ -76,7 +76,7 @@ Problem.init(
     timestamps: true,
     freezeTableName: true,
     underscored: true,
-    modelName: "problem",
+    modelName: 'problem',
     tableName: "problem", 
   }
 );

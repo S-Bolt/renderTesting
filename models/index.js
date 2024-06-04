@@ -10,6 +10,7 @@ User.hasMany(UserProblem, {
 });
 Problem.belongsTo(User, {
   foreignKey: "user_id",
+  onDelete: 'CASCADE',
 });
 
 User.belongsToMany(Problem,{
@@ -17,10 +18,10 @@ User.belongsToMany(Problem,{
   foreignKey:"user_id"
   
 });
-Problem.belongsToMany(User,{
-  through:UserProblem,
-  foreignKey:"problem_id"
-});
+// Problem.belongsToMany(User,{
+//   through:UserProblem,
+//   foreignKey:"problem_id"
+// });
   Problem.hasMany(Comment, {
     foreignKey: "problem_id",
     onDelete: "CASCADE",
