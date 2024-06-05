@@ -1,4 +1,3 @@
-// public/js/create-problem.js
 document.addEventListener("DOMContentLoaded", () => {
   const createProblemForm = document.getElementById("create-problem-form");
 
@@ -14,6 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
     "constraints",
     "handler-function",
     "starter_function_name",
+    "problem_solution",
   ];
 
   inputFields.forEach((fieldId) => {
@@ -43,6 +43,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const starterFunctionName = document
       .getElementById("starter_function_name")
       .value.trim();
+    const problemSolution = document
+      .getElementById("problem_solution")
+      .value.trim();
 
     let examplesParsed;
     try {
@@ -64,6 +67,7 @@ document.addEventListener("DOMContentLoaded", () => {
       constraints,
       handler_function: handlerFunction,
       starter_function_name: starterFunctionName,
+      problem_solution: problemSolution,
     };
 
     console.log("Submitting problem data:", problemData);

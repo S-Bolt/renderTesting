@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const { Comment, User } = require("../../models");
+const { Comment, User, Problem } = require("../../models");
 const withAuth = require("../../public/utils/auth.js");
 
 // Get comments for a problem
@@ -9,7 +9,7 @@ router.get("/:problem_id", async (req, res) => {
       where: {
         problem_id: req.params.problem_id,
       },
-      include: [{ model: User, attributes: ["username"] }],
+      include: [{ model: User, as: "user", attributes: ["username"] }],
     });
     res.json(comments);
   } catch (err) {

@@ -21,7 +21,6 @@ UserProblem.init(
     },
     problem_id: {
       type: DataTypes.INTEGER,
-      allowNull: false,
       references: {
         model: "problem",
         key: "id",
