@@ -22,8 +22,12 @@ const seedDatabase = async () => {
   });
   // 3. Create comments with correct user_id and problem_id
   const commentsWithCorrectIds = mockComments.map((comment) => {
-    const user = users.find((user) => user.username === `User${comment.user_id}`);
-    const problem = createdProblems.find((problem) => problem.id === comment.problem_id);
+    const user = users.find(
+      (user) => user.username === `User${comment.user_id}`
+    );
+    const problem = createdProblems.find(
+      (problem) => problem.id === comment.problem_id
+    );
     return {
       ...comment,
       user_id: user.id,
@@ -56,11 +60,3 @@ const seedDatabase = async () => {
 };
 
 seedDatabase();
-
-
-
-
-
-
-
-
