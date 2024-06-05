@@ -1,3 +1,4 @@
+// models/Problem.js
 const { Model, DataTypes } = require("sequelize");
 const sequelize = require("../config/connection");
 
@@ -81,7 +82,6 @@ Problem.init(
     freezeTableName: true,
     underscored: true,
     modelName: "problem",
-    tableName: "problem", 
   }
 );
 

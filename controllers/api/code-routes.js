@@ -23,24 +23,29 @@ router.post("/submit-code", async (req, res) => {
 
     const { success, results } = await handlerFunction(code);
 
-    await UserProblem.upsert({
-      user_id: req.session.user_id,
-      problem_id: problemId,
-      code,
-      results: success,
-    });
-    console.log(results);
-    console.log(success);
-    console.log(code);
-    console.log(problemId);
-    console.log(req.session.user_id);
+    console.log("Handler function executed:", { success, results });
+
+    await UserProblem.upsert(
+      {
+        user_id: req.session.user_id,
+        problem_id: problemId,
+        code,
+        results: success,
+      },
+      {
+        conflictFields: ["user_id", "problem_id"], // Handle the unique constraint conflict
+        updateOnDuplicate: ["code", "results", "updated_at"], // Fields to update on conflict
+      }
+    );
+
+    console.log("UserProblem upsert successful");
 
     res.json({ success, testCaseResults: results });
   } catch (error) {
+    console.error("Failed to execute code:", error);
     res.status(500).json({ error: "Failed to execute code" });
   }
 });
-
 
 router.get("/submissions/:problemId", async (req, res) => {
   try {
@@ -58,6 +63,7 @@ router.get("/submissions/:problemId", async (req, res) => {
     res.json(submission);
     console.log(submission);
   } catch (error) {
+    console.error("Failed to fetch submissions:", error);
     res.status(500).json({ error: "Failed to fetch submissions" });
   }
 });

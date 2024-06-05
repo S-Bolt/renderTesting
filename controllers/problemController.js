@@ -20,6 +20,14 @@ const getProblems = async (req, res) => {
         "starter_function_name",
         "problem_solution",
       ],
+      include: [
+        {
+          model: User,
+          as: "user",
+          attributes: ["username"],
+        },
+
+      ],
     });
     res.status(200).json(problems);
   } catch (err) {
@@ -29,19 +37,29 @@ const getProblems = async (req, res) => {
 };
 
 const getProblemById = async (req, res) => {
-  const id = parseInt(req.params.id, 10); // Ensure id is an integer
+  const id = parseInt(req.params.id, 10);
   if (isNaN(id)) {
     return res.status(400).json({ error: "Invalid problem ID" });
   }
   try {
     const problemData = await Problem.findByPk(id, {
-      include: [{ model: User, attributes: ["username"] }],
+      include: [
+        {
+          model: User,
+          as: "user",
+          attributes: ["username"],
+        },
+        {
+          model: UserProblem,
+          as: "userProblems",
+          attributes: ["code", "results", "liked", "disliked", "starred"],
+        },
+      ],
       attributes: [
         "id",
         "title",
         "difficulty",
         "category",
-        "video_id",
         "problem_statement",
         "examples",
         "constraints",
@@ -53,7 +71,9 @@ const getProblemById = async (req, res) => {
         "problem_solution",
       ],
     });
+
 console.log(problemData);
+
     if (!problemData) {
       return res
         .status(404)
@@ -61,7 +81,6 @@ console.log(problemData);
     }
 
     const problem = problemData.get({ plain: true });
-console.log(problem);
     return res.json(problem);
   } catch (err) {
     console.error(err);
@@ -134,7 +153,6 @@ const getFeedback = async (req, res) => {
       return;
     }
 
-    const user = await User.findByPk(req.session.user_id);
     const userProblem = await UserProblem.findOne({
       where: { user_id: req.session.user_id, problem_id: req.params.id },
     });

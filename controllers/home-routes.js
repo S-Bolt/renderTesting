@@ -11,6 +11,7 @@ router.get("/", async (req, res) => {
       include: [
         {
           model: User,
+          as: "user",
           attributes: ["username"],
         },
       ],
@@ -66,13 +67,13 @@ router.get("/", async (req, res) => {
 
 // Route for displaying a single problem by ID and render workspace
 router.get("/problems/:id", withAuth, async (req, res) => {
-  const id = parseInt(req.params.id, 10); // Ensure id is an integer
+  const id = parseInt(req.params.id, 10);
   if (isNaN(id)) {
     return res.status(400).json({ error: "Invalid problem ID" });
   }
   try {
     const problemData = await Problem.findByPk(id, {
-      include: [{ model: User, attributes: ["username"] }],
+      include: [{ model: User, as: "user", attributes: ["username"] }],
     });
     console.log(problemData);
     if (!problemData) {
@@ -187,6 +188,7 @@ router.get("/dashboard/problems", withAuth, async (req, res) => {
       include: [
         {
           model: User,
+          as: "user",
           attributes: ["username"],
         },
       ],
@@ -217,10 +219,12 @@ router.get("/dashboard/comments", withAuth, async (req, res) => {
       include: [
         {
           model: User,
+          as: "user",
           attributes: ["username"],
         },
         {
           model: Problem,
+          as: "problem",
           attributes: ["title"],
         },
       ],
@@ -251,7 +255,8 @@ router.get("/dashboard/liked-problems", withAuth, async (req, res) => {
       include: [
         {
           model: Problem,
-          include: [{ model: User, attributes: ["username"] }],
+          as: "problem",
+          include: [{ model: User, as: "user", attributes: ["username"] }],
         },
       ],
     });
@@ -281,7 +286,8 @@ router.get("/dashboard/disliked-problems", withAuth, async (req, res) => {
       include: [
         {
           model: Problem,
-          include: [{ model: User, attributes: ["username"] }],
+          as: "problem",
+          include: [{ model: User, as: "user", attributes: ["username"] }],
         },
       ],
     });
@@ -311,7 +317,8 @@ router.get("/dashboard/starred-problems", withAuth, async (req, res) => {
       include: [
         {
           model: Problem,
-          include: [{ model: User, attributes: ["username"] }],
+          as: "problem",
+          include: [{ model: User, as: "user", attributes: ["username"] }],
         },
       ],
     });
@@ -340,6 +347,7 @@ router.get("/problems", withAuth, async (req, res) => {
       include: [
         {
           model: User,
+          as: "user",
           attributes: ["username"],
         },
       ],
@@ -370,7 +378,7 @@ router.get("/problems", withAuth, async (req, res) => {
       username: req.session.username,
       problems: problemsData,
       logged_in: req.session.logged_in,
-      isDashboard: false, // Dashboard page
+      isDashboard: false,
       isHomepage: false,
     });
   } catch (err) {

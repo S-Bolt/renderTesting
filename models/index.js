@@ -4,25 +4,26 @@ const Problem = require('./Problem');
 const UserProblem = require('./UserProblem');
 const Comment = require('./Comment');
 
-
+// User and UserProblem Association
 User.hasMany(UserProblem, {
   foreignKey: "user_id",
   onDelete: "CASCADE",
 });
-Problem.belongsTo(User, {
+UserProblem.belongsTo(User, {
   foreignKey: "user_id",
- 
+
 });
 
-User.belongsToMany(Problem,{
-  through:UserProblem,
-  foreignKey:"user_id"
-  
+// Problem and UserProblem Association
+Problem.hasMany(UserProblem, {
+  foreignKey: "problem_id",
+  onDelete: "CASCADE",
+  as: "userProblems",
 });
-Problem.belongsToMany(User,{
-  through:UserProblem,
-  foreignKey:"problem_id"
+UserProblem.belongsTo(Problem, {
+  foreignKey: "problem_id",
 });
+
 User.hasMany(Comment, {
   foreignKey: "user_id",
   onDelete: "CASCADE",
@@ -31,11 +32,24 @@ User.hasMany(Comment, {
     foreignKey: "problem_id",
     onDelete: "CASCADE",
   });
-  
 Comment.belongsTo(User, {
   foreignKey: "user_id",
+});
+
+// Problem and Comment Association
+Problem.hasMany(Comment, {
+  foreignKey: "problem_id",
+  onDelete: "CASCADE",
 });
 Comment.belongsTo(Problem, {
   foreignKey: "problem_id",
 });
+
+// User and Problem Association (for problem owner)
+Problem.belongsTo(User, {
+  foreignKey: "user_id",
+  onDelete: "CASCADE",
+  as: "user",
+});
+
 module.exports = { User, Problem, UserProblem, Comment };

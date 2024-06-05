@@ -1,4 +1,3 @@
-// controllers/api/user-routes.js
 const router = require("express").Router();
 const { User, UserProblem } = require("../../models");
 const multer = require("multer");

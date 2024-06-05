@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const { Problem, User } = require("../../models");
+const { Problem } = require("../../models");
 const withAuth = require("../../public/utils/auth.js");
 const {
   getProblems,
@@ -48,6 +48,7 @@ router.post("/", withAuth, async (req, res) => {
       constraints,
       handler_function,
       starter_function_name,
+      problem_solution,
     } = req.body;
 
     if (
@@ -59,7 +60,8 @@ router.post("/", withAuth, async (req, res) => {
       !examples ||
       !constraints ||
       !handler_function ||
-      !starter_function_name
+      !starter_function_name ||
+      !problem_solution
     ) {
       return res
         .status(400)
@@ -78,7 +80,8 @@ router.post("/", withAuth, async (req, res) => {
       constraints,
       handler_function,
       starter_function_name,
-      user_id: req.session.user_id,
+      problem_solution,
+      user_id: req.session.user_id, // Ensure user_id is correctly set
     });
 
     // Update the handler map
