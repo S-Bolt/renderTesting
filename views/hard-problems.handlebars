@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hard Problems</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script type="module" src="/js/topbar.js"></script>
+</head>
+
+<table class="problems-table">
+  <thead class="table-head">
+    <tr class="table-row">
+      <th scope="col">Status</th>
+      <th scope="col">Title</th>
+      <th scope="col">Difficulty</th>
+      <th scope="col">Solution</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each problems}}
+      <tr class="problems-table-row">
+        <td class="status-cell">
+          {{#if this.solved}}
+            <i class="fas fa-check-circle text-success"></i>
+          {{/if}}
+        </td>
+        <td class="title-cell">
+          <a href="/problems/{{this.id}}" class="problem-link">{{this.title}}</a>
+        </td>
+        <td class="difficulty-cell Hard">{{this.difficulty}}</td>
+        <td class="solution-cell">
+          {{#if this.video_id}}
+            <i class="fab fa-youtube text-danger youtube-icon" data-video-id="{{this.video_id}}"></i>
+          {{else}}
+            <p class="text-muted">Coming soon</p>
+          {{/if}}
+        </td>
+      </tr>
+    {{/each}}
+  </tbody>
+</table>
+</html>
+
+
