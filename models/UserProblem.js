@@ -13,19 +13,19 @@ UserProblem.init(
     },
     user_id: {
       type: DataTypes.INTEGER,
+      allowNull: false,
       references: {
         model: "user",
         key: "id",
       },
-      onDelete: "CASCADE",
     },
     problem_id: {
       type: DataTypes.INTEGER,
+      allowNull: false,
       references: {
         model: "problem",
         key: "id",
       },
-      onDelete: "CASCADE",
     },
     code: {
       type: DataTypes.TEXT,
@@ -34,7 +34,6 @@ UserProblem.init(
     results: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
-      defaultValue: false,
     },
     liked: {
       type: DataTypes.BOOLEAN,
@@ -54,10 +53,13 @@ UserProblem.init(
   },
   {
     sequelize,
-    timestamps: true,
-    freezeTableName: true,
-    underscored: true,
     modelName: "user_problem",
+    indexes: [
+      {
+        unique: true,
+        fields: ["user_id", "problem_id"],
+      },
+    ],
   }
 );
 
