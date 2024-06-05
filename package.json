@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node server.js",
     "test": "jest",
-    "seed": "node seeds/seed.js"
+    "seed": "node seeds/seed.js",
+    "build": "npm install && npm run seed"
   },
   "dependencies": {
     "@uiw/codemirror-theme-dracula": "^4.22.1",
